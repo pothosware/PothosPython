@@ -1,5 +1,10 @@
 This this the changelog file for the Pothos Python toolkit.
 
+Release 0.1.3 (pending)
+==========================
+
+- Added missing libpoco-dev to debian Build-Depends
+
 Release 0.1.2 (2015-12-16)
 ==========================
 
