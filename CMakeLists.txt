@@ -8,6 +8,11 @@ find_package(Pothos CONFIG REQUIRED)
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 include(PothosPythonUtil)
 
+#help find_package(PythonLibs) by setting Python_ADDITIONAL_VERSIONS from PYTHON_VERSION_STRING
+if(PYTHONINTERP_FOUND AND DEFINED PYTHON_VERSION_STRING AND NOT DEFINED Python_ADDITIONAL_VERSIONS)
+    string(SUBSTRING "${PYTHON_VERSION_STRING}" 0 3 Python_ADDITIONAL_VERSIONS)
+endif()
+
 ########################################################################
 ## Find python
 ########################################################################
