@@ -85,7 +85,7 @@ static Pothos::Proxy convertProxyToPyProxy(Pothos::ProxyEnvironment::Sptr env, c
 
 void registerPothosModuleConverters(void)
 {
-    Pothos::PluginRegistry::addCall("/proxy_helpers/python", &handlePythonPluginEvent);
+    Pothos::PluginRegistry::addCall("/proxy_helpers/" POTHOS_PYNAME, &handlePythonPluginEvent);
     Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/proxy_to_pyproxy",
         &convertProxyToPyProxy);
     Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pyproxy_to_proxy",
