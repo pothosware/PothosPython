@@ -12,7 +12,7 @@ include(PothosPythonUtil)
 ## Build and install tester blocks for python bindings
 ########################################################################
 POTHOS_PYTHON_UTIL(
-    TARGET PythonTestBlocks
+    TARGET Python${POTHOS_PYVER}TestBlocks
     SOURCES
         __init__.py
         Forwarder.py
