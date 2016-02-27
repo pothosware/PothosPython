@@ -68,7 +68,7 @@ set(SOURCES
 )
 
 POTHOS_MODULE_UTIL(
-    TARGET PythonSupport
+    TARGET Python${POTHOS_PYVER}Support
     SOURCES ${SOURCES}
     LIBRARIES ${PYTHON_LIBRARIES}
     DESTINATION proxy/environment

@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014 Josh Blum
+// Copyright (c) 2013-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Plugin.hpp>
@@ -6,6 +6,7 @@
 #include <complex>
 #include <iostream>
 #include "PythonProxy.hpp"
+#include "PythonSupport.hpp"
 
 /***********************************************************************
  * None
@@ -22,9 +23,9 @@ static Pothos::NullObject convertPyNoneToNull(const Pothos::Proxy &)
 
 pothos_static_block(pothosRegisterPythonNullConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/null_to_pynone",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/null_to_pynone",
         &convertNullToPyNone);
-    Pothos::PluginRegistry::add("/proxy/converters/python/pynone_to_null",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pynone_to_null",
         Pothos::ProxyConvertPair("NoneType", &convertPyNoneToNull));
 }
 
@@ -43,9 +44,9 @@ static bool convertPyBoolToBool(const Pothos::Proxy &proxy)
 
 pothos_static_block(pothosRegisterPythonBoolConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/bool_to_pybool",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/bool_to_pybool",
         &convertBoolToPyBool);
-    Pothos::PluginRegistry::add("/proxy/converters/python/pybool_to_bool",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pybool_to_bool",
         Pothos::ProxyConvertPair("bool", &convertPyBoolToBool));
 }
 
@@ -73,29 +74,29 @@ static long convertPyIntToLong(const Pothos::Proxy &proxy)
 
 pothos_static_block(pothosRegisterPythonIntConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/char_to_pyint",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/char_to_pyint",
         &convertIntNumToPyInt<char>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/schar_to_pyint",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/schar_to_pyint",
         &convertIntNumToPyInt<signed char>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/uchar_to_pyint",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/uchar_to_pyint",
         &convertIntNumToPyInt<unsigned char>);
 
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/sshort_to_pyint",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/sshort_to_pyint",
         &convertIntNumToPyInt<signed short>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/ushort_to_pyint",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/ushort_to_pyint",
         &convertIntNumToPyInt<unsigned short>);
 
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/sint_to_pyint",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/sint_to_pyint",
         &convertIntNumToPyInt<signed int>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/uint_to_pyint",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/uint_to_pyint",
         &convertIntNumToPyInt<unsigned int>);
 
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/slong_to_pyint",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/slong_to_pyint",
         &convertIntNumToPyInt<signed long>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/ulong_to_pyint",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/ulong_to_pyint",
         &convertIntNumToPyInt<unsigned long>);
 
-    Pothos::PluginRegistry::add("/proxy/converters/python/pyint_to_long",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pyint_to_long",
         Pothos::ProxyConvertPair("int", &convertPyIntToLong));
 }
 
@@ -115,12 +116,12 @@ static long long convertPyLongToLongLong(const Pothos::Proxy &proxy)
 
 pothos_static_block(pothosRegisterPythonLongConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/sllong_to_pylong",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/sllong_to_pylong",
         &convertLongLongToPyLong<signed long long>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/ullong_to_pylong",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/ullong_to_pylong",
         &convertLongLongToPyLong<unsigned long long>);
 
-    Pothos::PluginRegistry::add("/proxy/converters/python/pylong_to_llong",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pylong_to_llong",
         Pothos::ProxyConvertPair("long", &convertPyLongToLongLong));
 }
 
@@ -140,12 +141,12 @@ static double convertPyFloatToDouble(const Pothos::Proxy &proxy)
 
 pothos_static_block(pothosRegisterPythonFloatConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/float_to_pyfloat",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/float_to_pyfloat",
         &convertFloatNumToPyFloat<float>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/double_to_pyfloat",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/double_to_pyfloat",
         &convertFloatNumToPyFloat<double>);
 
-    Pothos::PluginRegistry::add("/proxy/converters/python/pyfloat_to_double",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pyfloat_to_double",
         Pothos::ProxyConvertPair("float", &convertPyFloatToDouble));
 }
 
@@ -166,12 +167,12 @@ static std::complex<double> convertPyComplexToComplex(const Pothos::Proxy &proxy
 
 pothos_static_block(pothosRegisterPythonComplexConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/complex64_to_pycomplex",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/complex64_to_pycomplex",
         &convertComplexToPyComplex<float>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/complex128_to_pycomplex",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/complex128_to_pycomplex",
         &convertComplexToPyComplex<double>);
 
-    Pothos::PluginRegistry::add("/proxy/converters/python/pycomplex_to_complex128",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pycomplex_to_complex128",
         Pothos::ProxyConvertPair("complex", &convertPyComplexToComplex));
 }
 
@@ -198,11 +199,11 @@ static Pothos::Proxy convertStrVecToPyList(Pothos::ProxyEnvironment::Sptr env, c
 
 pothos_static_block(pothosRegisterPythonStringConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/string_to_pystring",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/string_to_pystring",
         &convertStringToPyString);
-    Pothos::PluginRegistry::add("/proxy/converters/python/pystring_to_string",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pystring_to_string",
         Pothos::ProxyConvertPair("str", &convertPyStringToString));
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecstring_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecstring_to_pylist",
         &convertStrVecToPyList);
 }
 
@@ -225,13 +226,13 @@ static std::vector<char> convertPyBytesToString(const Pothos::Proxy &proxy)
 
 pothos_static_block(pothosRegisterPythonBytesConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecchar_to_pybytes",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecchar_to_pybytes",
         &convertByteVectorToPyBytes<char>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecschar_to_pybytes",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecschar_to_pybytes",
         &convertByteVectorToPyBytes<signed char>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecuchar_to_pybytes",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecuchar_to_pybytes",
         &convertByteVectorToPyBytes<unsigned char>);
-    Pothos::PluginRegistry::add("/proxy/converters/python/pybytes_to_string",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pybytes_to_string",
         Pothos::ProxyConvertPair("bytes", &convertPyBytesToString));
 }
 
@@ -292,29 +293,29 @@ static Pothos::Proxy convertComplexVectorToPyList(Pothos::ProxyEnvironment::Sptr
 
 pothos_static_block(pothosRegisterPythonNumericConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecsshort_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecsshort_to_pylist",
         &convertIntVectorToPyList<signed short>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecushort_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecushort_to_pylist",
         &convertIntVectorToPyList<unsigned short>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecsint_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecsint_to_pylist",
         &convertIntVectorToPyList<signed int>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecuint_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecuint_to_pylist",
         &convertIntVectorToPyList<unsigned int>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecslong_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecslong_to_pylist",
         &convertIntVectorToPyList<signed long>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/veculong_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/veculong_to_pylist",
         &convertIntVectorToPyList<unsigned long>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecsllong_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecsllong_to_pylist",
         &convertLongLongVectorToPyList<signed long long>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecullong_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecullong_to_pylist",
         &convertLongLongVectorToPyList<unsigned long long>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecfloat_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecfloat_to_pylist",
         &convertFloatVectorToPyList<float>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vecdouble_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vecdouble_to_pylist",
         &convertFloatVectorToPyList<double>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/veccomplexfloat_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/veccomplexfloat_to_pylist",
         &convertComplexVectorToPyList<float>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/veccomplexdouble_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/veccomplexdouble_to_pylist",
         &convertComplexVectorToPyList<double>);
 }
 
@@ -335,7 +336,7 @@ static Pothos::ProxyVector convertPyTupleToVector(const Pothos::Proxy &proxy)
 
 pothos_static_block(pothosRegisterPythonTupleConversions)
 {
-    Pothos::PluginRegistry::add("/proxy/converters/python/pytuple_to_vector",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pytuple_to_vector",
         Pothos::ProxyConvertPair("tuple", &convertPyTupleToVector));
 }
 
@@ -367,9 +368,9 @@ static Pothos::ProxyVector convertPyListToVector(const Pothos::Proxy &proxy)
 
 pothos_static_block(pothosRegisterPythonListConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/vector_to_pylist",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/vector_to_pylist",
         &convertVectorToPyList);
-    Pothos::PluginRegistry::add("/proxy/converters/python/pylist_to_vector",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pylist_to_vector",
         Pothos::ProxyConvertPair("list", &convertPyListToVector));
 }
 
@@ -403,9 +404,9 @@ static Pothos::ProxySet convertPySetToSet(const Pothos::Proxy &proxy)
 
 pothos_static_block(pothosRegisterPythonSetConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/set_to_pyset",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/set_to_pyset",
         &convertSetToPySet);
-    Pothos::PluginRegistry::add("/proxy/converters/python/pyset_to_set",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pyset_to_set",
         Pothos::ProxyConvertPair("set", &convertPySetToSet));
 }
 
@@ -442,8 +443,8 @@ static Pothos::ProxyMap convertPyDictToMap(const Pothos::Proxy &proxy)
 
 pothos_static_block(pothosRegisterPythonDictConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/map_to_pydict",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/map_to_pydict",
         &convertMapToPyDict);
-    Pothos::PluginRegistry::add("/proxy/converters/python/pydict_to_map",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pydict_to_map",
         Pothos::ProxyConvertPair("dict", &convertPyDictToMap));
 }

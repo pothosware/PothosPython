@@ -1,6 +1,7 @@
-// Copyright (c) 2014-2014 Josh Blum
+// Copyright (c) 2014-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
+#include "PythonSupport.hpp"
 #include "PythonProxy.hpp"
 #include <Pothos/Plugin.hpp>
 #include <cassert>
@@ -22,8 +23,8 @@ static PyObject *convertProxyToPyObject(const Pothos::Proxy &proxy)
 
 pothos_static_block(pothosRegisterPyObjectHelpers)
 {
-    Pothos::PluginRegistry::add("/proxy_helpers/python/pyobject_to_proxy",
+    Pothos::PluginRegistry::add("/proxy_helpers/" POTHOS_PYNAME "/pyobject_to_proxy",
         PyObjectToProxyFcn(&convertPyObjectToProxy));
-    Pothos::PluginRegistry::add("/proxy_helpers/python/proxy_to_pyobject",
+    Pothos::PluginRegistry::add("/proxy_helpers/" POTHOS_PYNAME "/proxy_to_pyobject",
         ProxyToPyObjectFcn(&convertProxyToPyObject));
 }

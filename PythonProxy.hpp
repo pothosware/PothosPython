@@ -1,7 +1,8 @@
-// Copyright (c) 2013-2014 Josh Blum
+// Copyright (c) 2013-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #pragma once
+#include "PythonSupport.hpp"
 #include "PyObjectUtils.hpp"
 #include <Pothos/Config.hpp>
 #include <Pothos/Proxy.hpp>
@@ -62,7 +63,7 @@ public:
 
     std::string getName(void) const
     {
-        return "python";
+        return POTHOS_PYNAME;
     }
 
     Pothos::Proxy findProxy(const std::string &name);

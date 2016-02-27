@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2014 Josh Blum
+# Copyright (c) 2014-2016 Josh Blum
 # SPDX-License-Identifier: BSL-1.0
 
 from . PothosModule import *
@@ -6,12 +6,14 @@ from . InputPort import InputPort
 from . OutputPort import OutputPort
 from . Label import Label, LabelIteratorRange
 import weakref
+import sys
 
 class Block(object):
     def __init__(self):
         env = ProxyEnvironment("managed")
         reg = env.findProxy("Pothos/BlockRegistry")
-        self._block = reg.callProxy("/blocks/python_block")
+        pyname = "python%d%d"%(sys.version_info.major, sys.version_info.minor)
+        self._block = reg.callProxy("/%s/python_block"%pyname)
         self._block._setPyBlock(weakref.proxy(self))
 
     def __getattr__(self, name):

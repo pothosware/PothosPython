@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 Josh Blum
+// Copyright (c) 2014-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Framework.hpp>
@@ -7,7 +7,7 @@
 static Pothos::Object @class_name@Factory(const Pothos::Object *args, const size_t numArgs)
 {
     //create python environment
-    auto env = Pothos::ProxyEnvironment::make("python");
+    auto env = Pothos::ProxyEnvironment::make("python@POTHOS_PYVER@");
 
     //convert arguments into proxy environment
     std::vector<Pothos::Proxy> proxyArgs(numArgs);

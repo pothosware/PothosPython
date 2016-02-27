@@ -3,6 +3,7 @@ This this the changelog file for the Pothos Python toolkit.
 Release 0.1.3 (pending)
 ==========================
 
+- Use the python version tuple for all registry paths
 - Ability to override POTHOS_PYTHON_DIR cmake variable
 - Added missing libpoco-dev to debian Build-Depends
 

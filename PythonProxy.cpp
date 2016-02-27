@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2015 Josh Blum
+// Copyright (c) 2013-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include "PythonSupport.hpp"
@@ -161,6 +161,6 @@ Pothos::ProxyEnvironment::Sptr makePythonProxyEnvironment(const Pothos::ProxyEnv
 pothos_static_block(pothosRegisterPythonProxy)
 {
     Pothos::PluginRegistry::addCall(
-        "/proxy/environment/python",
+        "/proxy/environment/" POTHOS_PYNAME,
         &makePythonProxyEnvironment);
 }

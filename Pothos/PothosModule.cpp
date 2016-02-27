@@ -1,6 +1,7 @@
-// Copyright (c) 2014-2014 Josh Blum
+// Copyright (c) 2014-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
+#include "PythonSupport.hpp"
 #include "PothosModule.hpp"
 #include <Pothos/Plugin.hpp>
 #include <Pothos/Init.hpp>
@@ -19,9 +20,9 @@ static void initPyObjectUtilityConverters(void)
     try
     {
         Pothos::init(); //init here in case python is the caller
-        myPythonProxyEnv = Pothos::ProxyEnvironment::make("python");
-        myPyObjectToProxyFcn = Pothos::PluginRegistry::get("/proxy_helpers/python/pyobject_to_proxy").getObject().extract<PyObjectToProxyFcn>();
-        myProxyToPyObjectFcn = Pothos::PluginRegistry::get("/proxy_helpers/python/proxy_to_pyobject").getObject().extract<ProxyToPyObjectFcn>();
+        myPythonProxyEnv = Pothos::ProxyEnvironment::make(POTHOS_PYNAME);
+        myPyObjectToProxyFcn = Pothos::PluginRegistry::get("/proxy_helpers/" POTHOS_PYNAME "/pyobject_to_proxy").getObject().extract<PyObjectToProxyFcn>();
+        myProxyToPyObjectFcn = Pothos::PluginRegistry::get("/proxy_helpers/" POTHOS_PYNAME "/proxy_to_pyobject").getObject().extract<ProxyToPyObjectFcn>();
         registerPothosModuleConverters();
     }
     catch (const Pothos::Exception &ex)
@@ -32,17 +33,17 @@ static void initPyObjectUtilityConverters(void)
 
 static void handlePythonPluginEvent(const Pothos::Plugin &plugin, const std::string &event)
 {
-    if (event == "remove" and plugin.getPath() == Pothos::PluginPath("/proxy_helpers/python/pyobject_to_proxy"))
+    if (event == "remove" and plugin.getPath() == Pothos::PluginPath("/proxy_helpers/" POTHOS_PYNAME "/pyobject_to_proxy"))
     {
         myPythonProxyEnv.reset();
         myPyObjectToProxyFcn = PyObjectToProxyFcn();
-        Pothos::PluginRegistry::remove("/proxy/converters/python/proxy_to_pyproxy");
+        Pothos::PluginRegistry::remove("/proxy/converters/" POTHOS_PYNAME "/proxy_to_pyproxy");
     }
-    if (event == "remove" and plugin.getPath() == Pothos::PluginPath("/proxy_helpers/python/proxy_to_pyobject"))
+    if (event == "remove" and plugin.getPath() == Pothos::PluginPath("/proxy_helpers/" POTHOS_PYNAME "/proxy_to_pyobject"))
     {
         myPythonProxyEnv.reset();
         myProxyToPyObjectFcn = ProxyToPyObjectFcn();
-        Pothos::PluginRegistry::remove("/proxy/converters/python/pyproxy_to_proxy");
+        Pothos::PluginRegistry::remove("/proxy/converters/" POTHOS_PYNAME "/pyproxy_to_proxy");
     }
 }
 
@@ -85,9 +86,9 @@ static Pothos::Proxy convertProxyToPyProxy(Pothos::ProxyEnvironment::Sptr env, c
 void registerPothosModuleConverters(void)
 {
     Pothos::PluginRegistry::addCall("/proxy_helpers/python", &handlePythonPluginEvent);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/proxy_to_pyproxy",
+    Pothos::PluginRegistry::addCall("/proxy/converters/" POTHOS_PYNAME "/proxy_to_pyproxy",
         &convertProxyToPyProxy);
-    Pothos::PluginRegistry::add("/proxy/converters/python/pyproxy_to_proxy",
+    Pothos::PluginRegistry::add("/proxy/converters/" POTHOS_PYNAME "/pyproxy_to_proxy",
         Pothos::ProxyConvertPair("PothosProxy", &convertPyProxyToProxy));
 }
 

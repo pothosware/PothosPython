@@ -1,6 +1,7 @@
-// Copyright (c) 2013-2014 Josh Blum
+// Copyright (c) 2013-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
+#include "PythonSupport.hpp"
 #include <Pothos/Testing.hpp>
 #include <Pothos/Proxy.hpp>
 #include <iostream>
@@ -8,9 +9,9 @@
 #include <cstdlib>
 #include <sstream>
 
-POTHOS_TEST_BLOCK("/proxy/python/tests", test_basic_types)
+POTHOS_TEST_BLOCK("/proxy/" POTHOS_PYNAME "/tests", test_basic_types)
 {
-    auto env = Pothos::ProxyEnvironment::make("python");
+    auto env = Pothos::ProxyEnvironment::make(POTHOS_PYNAME);
 
     auto noneProxy = env->convertObjectToProxy(Pothos::Object());
     auto nullObject = env->convertProxyToObject(noneProxy);
@@ -35,9 +36,9 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_basic_types)
     POTHOS_TEST_EQUAL(env->makeProxy(strVal).convert<std::string>(), strVal);
 }
 
-POTHOS_TEST_BLOCK("/proxy/python/tests", test_compare_to)
+POTHOS_TEST_BLOCK("/proxy/" POTHOS_PYNAME "/tests", test_compare_to)
 {
-    auto env = Pothos::ProxyEnvironment::make("python");
+    auto env = Pothos::ProxyEnvironment::make(POTHOS_PYNAME);
 
     auto int0 = env->makeProxy(0);
     auto int1 = env->makeProxy(1);
@@ -60,9 +61,9 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_compare_to)
     POTHOS_TEST_EQUAL(int2.compareTo(int2Again), 0);
 }
 
-POTHOS_TEST_BLOCK("/proxy/python/tests", test_containers)
+POTHOS_TEST_BLOCK("/proxy/" POTHOS_PYNAME "/tests", test_containers)
 {
-    auto env = Pothos::ProxyEnvironment::make("python");
+    auto env = Pothos::ProxyEnvironment::make(POTHOS_PYNAME);
 
     //make test vector
     Pothos::ProxyVector testVec;
@@ -113,9 +114,9 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_containers)
     POTHOS_TEST_EQUAL(find1->second.convert<int>(), 2);
 }
 
-POTHOS_TEST_BLOCK("/proxy/python/tests", test_call_module)
+POTHOS_TEST_BLOCK("/proxy/" POTHOS_PYNAME "/tests", test_call_module)
 {
-    auto env = Pothos::ProxyEnvironment::make("python");
+    auto env = Pothos::ProxyEnvironment::make(POTHOS_PYNAME);
 
     auto re = env->findProxy("re");
     auto m = re.callProxy("search", "(?<=abc)def", "abcdef");
@@ -128,9 +129,9 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_call_module)
     myDict[env->makeProxy(1)] = env->makeProxy(2);
 }
 
-POTHOS_TEST_BLOCK("/proxy/python/tests", test_serialization)
+POTHOS_TEST_BLOCK("/proxy/" POTHOS_PYNAME "/tests", test_serialization)
 {
-    auto env = Pothos::ProxyEnvironment::make("python");
+    auto env = Pothos::ProxyEnvironment::make(POTHOS_PYNAME);
 
     //make test dictionary
     Pothos::ProxyMap testDict;
