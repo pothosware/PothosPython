@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014 Josh Blum
+// Copyright (c) 2013-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Plugin.hpp>
@@ -6,6 +6,25 @@
 #include <complex>
 #include <iostream>
 #include "PythonProxy.hpp"
+
+/***********************************************************************
+ * Object -- Allow the use of native python objects.
+ *
+ * When Pothos::Object is used in the C++ API as a return or field,
+ * it will arrive to the converter as an Object containing an Object.
+ * This converter handles un-nesting the object into a native PyObject.
+ * If the conversion fails, then convertObjectToProxy() simply wraps
+ * the object into a managed Proxy that can be handled by "ProxyType".
+ **********************************************************************/
+static Pothos::Proxy convertObjectToPyObject(Pothos::ProxyEnvironment::Sptr env, const Pothos::Object &obj)
+{
+    return env->convertObjectToProxy(obj);
+}
+
+pothos_static_block(pothosRegisterPythonObjectConversions)
+{
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/object_to_pyobject", &convertObjectToPyObject);
+}
 
 /***********************************************************************
  * None

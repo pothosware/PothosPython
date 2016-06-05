@@ -3,6 +3,7 @@ This this the changelog file for the Pothos Python toolkit.
 Release 0.2.0 (pending)
 ==========================
 
+- Allow the use of native PyObjects with using C++ Object
 - Added pythonic wrappers for Topology and BlockRegistry
 
 Release 0.1.3 (2016-03-06)
