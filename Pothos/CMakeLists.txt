@@ -40,4 +40,6 @@ install(FILES
     InputPort.py
     OutputPort.py
     TestPothos.py
+    Topology.py
+    BlockRegistry.py
     DESTINATION ${POTHOS_PYTHON_DIR}/Pothos)

@@ -23,26 +23,23 @@ if __name__ == '__main__':
     env = Pothos.ProxyEnvironment("managed")
 
     #make a topology to connect and process
-    topology = env.findProxy('Pothos/Topology').make()
-
-    #get the block registry
-    reg = env.findProxy("Pothos/BlockRegistry")
+    topology = Pothos.Topology()
 
     #create feeder block and give it a message
-    feeder = reg.callProxy("/blocks/feeder_source", "int")
+    feeder = Pothos.BlockRegistry("/blocks/feeder_source", "int")
     feeder.feedMessage("hello")
     feeder.feedMessage("world")
     feeder.feedMessage(123)
 
     #create a collector block to house the result
-    collector = reg.callProxy("/blocks/collector_sink", "int")
+    collector = Pothos.BlockRegistry("/blocks/collector_sink", "int")
 
     #use an all in-python block thats not even in the block registry
     fwd = MessageForwarder()
 
     #connect and run it
-    topology.connect(feeder, "0", fwd, "0")
-    topology.connect(fwd, "0", collector, "0")
+    topology.connect(feeder, 0, fwd, 0)
+    topology.connect(fwd, 0, collector, 0)
     topology.commit()
     topology.waitInactive()
 
