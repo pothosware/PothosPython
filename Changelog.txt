@@ -1,6 +1,6 @@
 This this the changelog file for the Pothos Python toolkit.
 
-Release 0.2.0 (pending)
+Release 0.1.4 (2016-06-24)
 ==========================
 
 - Allow the use of native PyObjects with using C++ Object
