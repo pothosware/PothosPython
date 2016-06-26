@@ -8,9 +8,10 @@ set(MODULE_SOURCES
     ProxyCallType.cpp
 )
 
-#field initializer warnings are unavoidable with PyTypeObject initialization
+#warnings that are unavoidable with PyTypeObject
 if (CMAKE_COMPILER_IS_GNUCXX)
     add_compile_options(-Wno-missing-field-initializers)
+    add_compile_options(-fno-strict-aliasing)
 endif()
 
 include_directories(${Pothos_INCLUDE_DIRS})
