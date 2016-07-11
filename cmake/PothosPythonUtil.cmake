@@ -9,7 +9,7 @@ set(POTHOS_PYTHON_UTIL_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 ########################################################################
 # Find python interp
 ########################################################################
-include(FindPythonInterp)
+find_package(PythonInterp)
 if (NOT PYTHONINTERP_FOUND)
     message(WARNING "Python bindings require python exe, skipping...")
 endif ()
