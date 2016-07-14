@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 Josh Blum
+// Copyright (c) 2014-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Framework.hpp>
@@ -22,11 +22,9 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_python_module)
 
 POTHOS_TEST_BLOCK("/proxy/python/tests", test_python_block)
 {
-    auto env = Pothos::ProxyEnvironment::make("managed");
-    auto reg = env->findProxy("Pothos/BlockRegistry");
-    auto feeder = reg.callProxy("/blocks/feeder_source", "int");
-    auto collector = reg.callProxy("/blocks/collector_sink", "int");
-    auto forwarder = reg.callProxy("/python/forwarder", Pothos::DType("int"));
+    auto feeder = Pothos::BlockRegistry::make("/blocks/feeder_source", "int");
+    auto collector = Pothos::BlockRegistry::make("/blocks/collector_sink", "int");
+    auto forwarder = Pothos::BlockRegistry::make("/python/forwarder", Pothos::DType("int"));
 
     //create a test plan
     Poco::JSON::Object::Ptr testPlan(new Poco::JSON::Object());
@@ -53,8 +51,8 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_signals_and_slots)
 {
     auto env = Pothos::ProxyEnvironment::make("managed");
     auto reg = env->findProxy("Pothos/BlockRegistry");
-    auto emitter = reg.callProxy("/python/simple_signal_emitter");
-    auto acceptor = reg.callProxy("/python/simple_slot_acceptor");
+    auto emitter = Pothos::BlockRegistry::make("/python/simple_signal_emitter");
+    auto acceptor = Pothos::BlockRegistry::make("/python/simple_slot_acceptor");
 
     //run the topology
     {

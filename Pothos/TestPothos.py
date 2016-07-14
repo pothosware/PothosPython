@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2014 Josh Blum
+# Copyright (c) 2014-2016 Josh Blum
 # SPDX-License-Identifier: BSL-1.0
 
 import Pothos
@@ -49,10 +49,15 @@ class TestPothosModule(unittest.TestCase):
         self.assertLess(1, twoProxy)
 
     def test_block(self):
+
+        #testing it through the proxy
         reg = self.env.findProxy("Pothos/BlockRegistry")
         self.assertTrue(reg)
         print(reg.callProxy("/blocks/feeder_source", "int"))
         print(hash(reg))
+
+        #using the wrapper
+        print(Pothos.BlockRegistry("/blocks/feeder_source", "int"))
 
 try: from StringIO import StringIO
 except ImportError: from io import StringIO
