@@ -1,5 +1,11 @@
 This this the changelog file for the Pothos Python toolkit.
 
+Release 0.1.5 (pending)
+==========================
+
+- Pothos plugin deinit() using std::atexit()
+- Switch to 0.4.0 API BlockRegistry factory
+
 Release 0.1.4 (2016-06-24)
 ==========================
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2014 Josh Blum
+// Copyright (c) 2014-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include "PothosModule.hpp"
@@ -6,6 +6,7 @@
 #include <Pothos/Init.hpp>
 #include <iostream>
 #include <cassert>
+#include <cstdlib>
 
 /***********************************************************************
  * module utility converters
@@ -19,6 +20,7 @@ static void initPyObjectUtilityConverters(void)
     try
     {
         Pothos::init(); //init here in case python is the caller
+        std::atexit(&Pothos::deinit);
         myPythonProxyEnv = Pothos::ProxyEnvironment::make("python");
         myPyObjectToProxyFcn = Pothos::PluginRegistry::get("/proxy_helpers/python/pyobject_to_proxy").getObject().extract<PyObjectToProxyFcn>();
         myProxyToPyObjectFcn = Pothos::PluginRegistry::get("/proxy_helpers/python/proxy_to_pyobject").getObject().extract<ProxyToPyObjectFcn>();
