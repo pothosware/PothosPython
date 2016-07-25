@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2014 Josh Blum
+// Copyright (c) 2014-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include "../PyObjectUtils.hpp"
@@ -17,8 +17,7 @@ Pothos::ProxyEnvironment::Sptr getPythonProxyEnv(void);
 inline Pothos::Proxy proxyEnvTranslate(const Pothos::Proxy &proxy, const Pothos::ProxyEnvironment::Sptr &env)
 {
     if (proxy.getEnvironment() == env) return proxy;
-    auto local = proxy.getEnvironment()->convertProxyToObject(proxy);
-    return env->convertObjectToProxy(local);
+    return env->convertObjectToProxy(proxy.toObject());
 }
 
 void registerPothosModuleConverters(void);

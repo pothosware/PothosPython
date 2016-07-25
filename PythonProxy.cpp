@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2015 Josh Blum
+// Copyright (c) 2013-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include "PythonSupport.hpp"
@@ -61,8 +61,7 @@ std::shared_ptr<PythonProxyHandle> PythonProxyEnvironment::getHandle(const Potho
     Pothos::Proxy myProxy = proxy;
     if (proxy.getEnvironment() != this->shared_from_this())
     {
-        auto local = proxy.getEnvironment()->convertProxyToObject(proxy);
-        myProxy = this->convertObjectToProxy(local);
+        myProxy = this->convertObjectToProxy(proxy.toObject());
     }
     auto handle = std::dynamic_pointer_cast<PythonProxyHandle>(myProxy.getHandle());
     assert(handle);
