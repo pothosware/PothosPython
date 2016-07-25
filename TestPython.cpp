@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014 Josh Blum
+// Copyright (c) 2013-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Testing.hpp>
@@ -122,10 +122,14 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_call_module)
     auto group = m.call<std::string>("group", 0);
     POTHOS_TEST_EQUAL(group, "def");
 
-
     Pothos::ProxyMap myDict;
     myDict[env->makeProxy("hi")] = env->makeProxy("bye");
     myDict[env->makeProxy(1)] = env->makeProxy(2);
+
+    auto datetime = env->findProxy("datetime");
+    auto datetimeClass = datetime.get("datetime");
+    auto datetime2000 = datetimeClass(2000, 1, 1);
+    POTHOS_TEST_EQUAL(datetime2000.get<int>("year"), 2000);
 }
 
 POTHOS_TEST_BLOCK("/proxy/python/tests", test_serialization)

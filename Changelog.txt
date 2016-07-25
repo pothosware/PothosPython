@@ -3,6 +3,7 @@ This this the changelog file for the Pothos Python toolkit.
 Release 0.1.5 (pending)
 ==========================
 
+- Support callable function operator syntax
 - Pothos plugin deinit() using std::atexit()
 - Switch to 0.4.0 API BlockRegistry factory
 

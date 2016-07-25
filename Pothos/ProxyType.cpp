@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2014 Josh Blum
+// Copyright (c) 2014-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include "PothosModule.hpp"
@@ -115,7 +115,19 @@ static PyObject *Proxy_convert(ProxyObject *self)
     }
 }
 
-static Pothos::Proxy Proxy_callProxyHelper(ProxyObject *self, PyObject *args)
+static Pothos::Proxy Proxy_callProxyHelper(ProxyObject *self, const std::string &name, PyObject *args, const int offset = 0)
+{
+    Pothos::ProxyVector proxyArgs;
+    if (args) for (int i = offset; i < PyTuple_Size(args); i++)
+    {
+        proxyArgs.push_back(PyObjectToProxy(PyTuple_GetItem(args, i)));
+    }
+
+    PyThreadStateLock lock; //proxy call could be potentially blocking
+    return self->proxy->getHandle()->call(name, proxyArgs.data(), proxyArgs.size());
+}
+
+static Pothos::Proxy Proxy_callProxyHelper(ProxyObject *self, PyObject *args, const int offset = 0)
 {
     //check the input
     if (not args or PyTuple_Size(args) < 1)
@@ -123,15 +135,9 @@ static Pothos::Proxy Proxy_callProxyHelper(ProxyObject *self, PyObject *args)
         throw Pothos::Exception("expects at least one arg for call name");
     }
 
-    Pothos::ProxyVector proxyArgs;
+    //extract name and call helper with offset
     const auto name = PyObjectToProxy(PyTuple_GetItem(args, 0)).convert<std::string>();
-    for (int i = 1; i < PyTuple_Size(args); i++)
-    {
-        proxyArgs.push_back(PyObjectToProxy(PyTuple_GetItem(args, i)));
-    }
-
-    PyThreadStateLock lock; //proxy call could be potentially blocking
-    return self->proxy->getHandle()->call(name, proxyArgs.data(), proxyArgs.size());
+    return Proxy_callProxyHelper(self, name, args, offset+1);
 }
 
 static PyObject *Proxy_callProxy(ProxyObject *self, PyObject *args)
@@ -153,6 +159,20 @@ static PyObject *Proxy_call(ProxyObject *self, PyObject *args)
     try
     {
         auto proxy = Proxy_callProxyHelper(self, args);
+        return ProxyToPyObject(proxyEnvTranslate(proxy, getPythonProxyEnv()));
+    }
+    catch (const Pothos::Exception &ex)
+    {
+        PyErr_SetString(PyExc_RuntimeError, ex.displayText().c_str());
+        return nullptr;
+    }
+}
+
+static PyObject *Proxy_callFunc(ProxyObject *self, PyObject *args, PyObject *)
+{
+    try
+    {
+        auto proxy = Proxy_callProxyHelper(self, "()", args);
         return ProxyToPyObject(proxyEnvTranslate(proxy, getPythonProxyEnv()));
     }
     catch (const Pothos::Exception &ex)
@@ -250,6 +270,7 @@ void registerProxyType(PyObject *m)
     ProxyType.tp_init = (initproc)Proxy_init;
     ProxyType.tp_getattro = (getattrofunc)Proxy_getattr;
     ProxyType.tp_setattro = (setattrofunc)Proxy_setattr;
+    ProxyType.tp_call = (ternaryfunc)Proxy_callFunc;
 
     ProxyType.tp_as_number = &ProxyNumberMethods;
     #if PY_MAJOR_VERSION >= 3

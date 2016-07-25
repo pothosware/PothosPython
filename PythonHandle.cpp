@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014 Josh Blum
+// Copyright (c) 2013-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Poco/Format.h>
@@ -100,9 +100,10 @@ Pothos::Proxy PythonProxyHandle::call(const std::string &name, const Pothos::Pro
      * Step 1) locate the callable object
      ******************************************************************/
     PyObjectRef attrObj;
+    const char *attrName = (name == "()")?"__call__":name.c_str(); //function call rewrite
 
     if (name.empty()) attrObj = PyObjectRef(ref);
-    else attrObj = PyObjectRef(PyObject_GetAttrString(this->obj, name.c_str()), REF_NEW);
+    else attrObj = PyObjectRef(PyObject_GetAttrString(this->obj, attrName), REF_NEW);
 
     if (attrObj.obj == nullptr)
     {
