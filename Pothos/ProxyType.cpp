@@ -48,16 +48,12 @@ static PyObject* Proxy_getattr(PyObject *self, PyObject *attr_name)
     try
     {
         //extract string name
-        const auto name = "get:"+PyObjectToProxy(attr_name).convert<std::string>();
+        const auto name = PyObjectToProxy(attr_name).convert<std::string>();
 
-        //empty args
-        Pothos::ProxyVector proxyArgs;
-
-        auto handle = reinterpret_cast<ProxyObject *>(self)->proxy->getHandle();
         Pothos::Proxy proxy;
         {
             PyThreadStateLock lock; //proxy call could be potentially blocking
-            proxy = handle->call(name, proxyArgs.data(), proxyArgs.size());
+            proxy = reinterpret_cast<ProxyObject *>(self)->proxy->get(name);
         }
 
         //convert the result into a pyobject
@@ -80,17 +76,14 @@ int Proxy_setattr(PyObject *self, PyObject *attr_name, PyObject *v)
     try
     {
         //extract string name
-        const auto name = "set:"+PyObjectToProxy(attr_name).convert<std::string>();
+        const auto name = PyObjectToProxy(attr_name).convert<std::string>();
 
-        //convert args
-        Pothos::ProxyVector proxyArgs;
-        proxyArgs.push_back(PyObjectToProxy(v));
+        //extract the value
+        const auto value = PyObjectToProxy(v);
 
-        auto handle = reinterpret_cast<ProxyObject *>(self)->proxy->getHandle();
-        Pothos::Proxy proxy;
         {
             PyThreadStateLock lock; //proxy call could be potentially blocking
-            proxy = handle->call(name, proxyArgs.data(), proxyArgs.size());
+            reinterpret_cast<ProxyObject *>(self)->proxy->set(name, value);
         }
     }
     catch (const Pothos::Exception &ex)
