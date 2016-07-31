@@ -13,10 +13,33 @@ Homepage: https://github.com/pothosware/pothos-python/wiki
 Vcs-Git: https://github.com/pothosware/pothos-python.git
 Vcs-Browser: https://github.com/pothosware/pothos-python
 
-Package: pothos-python
+Package: pothos-modules0.4-3-python
 Section: libs
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${shlibs:Depends}, ${misc:Depends}, python-numpy
-Description: Python language bindings
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Python language bindings - plugins
+ The Pothos data-flow software suite.
+
+Package: pothos-modules-python
+Section: libs
+Architecture: all
+Depends: pothos-modules0.4-3-python, ${misc:Depends}
+Description: Python language bindings - plugins metapackage
+ The Pothos data-flow software suite.
+
+Package: python-pothos
+Section: python
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, python-numpy, pothos-modules0.4-3-python
+Description: Python language bindings - python module
+ The Pothos data-flow software suite.
+
+Package: pothos-python-dev
+Section: libs
+Architecture: all
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, pothos-modules0.4-3-python
+Description: Python language bindings - development files
  The Pothos data-flow software suite.
