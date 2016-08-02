@@ -21,13 +21,6 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Python language bindings - plugins
  The Pothos data-flow software suite.
 
-Package: pothos-modules-python
-Section: libs
-Architecture: all
-Depends: pothos-modules0.4-3-python, ${misc:Depends}
-Description: Python language bindings - plugins metapackage
- The Pothos data-flow software suite.
-
 Package: python-pothos
 Section: python
 Architecture: any
