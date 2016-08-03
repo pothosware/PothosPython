@@ -1,5 +1,10 @@
 This this the changelog file for the Pothos Python toolkit.
 
+Release 0.2.1 (pending)
+==========================
+
+- Added missing debian install files
+
 Release 0.2.0 (2016-08-02)
 ==========================
 
