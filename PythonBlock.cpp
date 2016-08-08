@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2014 Josh Blum
+// Copyright (c) 2014-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Framework.hpp>
@@ -60,5 +60,5 @@ public:
     Pothos::Proxy _block;
 };
 
-static Pothos::BlockRegistry registerSocketSink(
+static Pothos::BlockRegistry registerPythonBlock(
     "/blocks/python_block", &PythonBlock::make);
