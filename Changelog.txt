@@ -3,6 +3,7 @@ This this the changelog file for the Pothos Python toolkit.
 Release 0.2.1 (pending)
 ==========================
 
+- Dual python2 + python3 build for debian packaging
 - Additional build helpers for python development config
 - Added missing debian install files
 
