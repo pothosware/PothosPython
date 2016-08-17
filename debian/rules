@@ -10,14 +10,43 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
 
+# create generated install files with the multi-arch directory
+# this is needed due to --destdir and use of wildcard matching
+GENERATED_INSTALL_FILES := \
+	debian/pothos-modules0.4-3-python3.install
+
+debian/%.install: debian/%.install.in
+	sed 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g' $< > $@
 
 %:
 	dh $@ --buildsystem=cmake --parallel
 
 override_dh_auto_configure:
-	dh_auto_configure -- \
+	dh_auto_configure --builddirectory build-python2 -- \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DPython_ADDITIONAL_VERSIONS=2 \
 		-DLIB_SUFFIX="/$(DEB_HOST_MULTIARCH)" \
 		-DCMAKE_SKIP_RPATH=TRUE
+	dh_auto_configure --builddirectory build-python3 -- \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DPython_ADDITIONAL_VERSIONS=3 \
+		-DLIB_SUFFIX="/$(DEB_HOST_MULTIARCH)" \
+		-DCMAKE_SKIP_RPATH=TRUE
+
+override_dh_auto_build:
+	dh_auto_build --builddirectory build-python2
+	dh_auto_build --builddirectory build-python3
+
+override_dh_auto_install: $(GENERATED_INSTALL_FILES)
+	dh_auto_install --builddirectory build-python2
+	dh_auto_install --builddirectory build-python3 --destdir python3
+
+override_dh_auto_clean:
+	dh_auto_clean --builddirectory build-python2
+	dh_auto_clean --builddirectory build-python3
+
+override_dh_auto_test:
+	echo "No tests"
 
 override_dh_installchangelogs:
 	dh_installchangelogs Changelog.txt
