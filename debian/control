@@ -41,7 +41,7 @@ Package: pothos-python-dev
 Section: libs
 Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${misc:Depends}
+Depends: ${misc:Depends}, libpothos-dev
 Description: Python language bindings - development files
  The Pothos data-flow software suite.
 
