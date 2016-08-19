@@ -31,7 +31,7 @@ override_dh_auto_configure:
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DPython_ADDITIONAL_VERSIONS=3 \
 		-DUSE_PYTHON_CONFIG=ON \
-		-DPYTHON_EXECUTABLE=$(which python3) \
+		-DPYTHON_EXECUTABLE=$(shell which python3) \
 		-DLIB_SUFFIX="/$(DEB_HOST_MULTIARCH)" \
 		-DCMAKE_SKIP_RPATH=TRUE
 
