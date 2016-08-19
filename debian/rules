@@ -30,6 +30,8 @@ override_dh_auto_configure:
 	dh_auto_configure --builddirectory build-python3 -- \
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DPython_ADDITIONAL_VERSIONS=3 \
+		-DUSE_PYTHON_CONFIG=ON \
+		-DPYTHON_EXECUTABLE=$(which python3) \
 		-DLIB_SUFFIX="/$(DEB_HOST_MULTIARCH)" \
 		-DCMAKE_SKIP_RPATH=TRUE
 
