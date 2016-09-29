@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 Josh Blum
+// Copyright (c) 2014-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Framework.hpp>
@@ -13,7 +13,7 @@ static Pothos::Object @class_name@Factory(const Pothos::Object *args, const size
     std::vector<Pothos::Proxy> proxyArgs(numArgs);
     for (size_t i = 0; i < numArgs; i++)
     {
-        proxyArgs[i] = env->convertObjectToProxy(args[i]);
+        proxyArgs[i] = env->makeProxy(args[i]);
     }
 
     //locate the module
