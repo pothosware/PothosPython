@@ -1,6 +1,8 @@
 // Copyright (c) 2016-2016 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
+#include <Pothos/System/Version.hpp>
+#if POTHOS_API_VERSION >= 0x00050000
 #include <Pothos/Util/BlockDescription.hpp>
 #include <Pothos/Plugin.hpp>
 #include <Pothos/System.hpp>
@@ -11,13 +13,38 @@
 #include <map>
 
 /***********************************************************************
+ * Recursive traverse for python files
+ **********************************************************************/
+static std::vector<Poco::Path> getPythonFiles(const Poco::Path &path)
+{
+    std::vector<Poco::Path> paths;
+
+    const Poco::File file(path);
+    if (not file.exists()) return paths;
+    else if (file.isFile() and (path.getExtension() == "py"))
+    {
+        paths.push_back(path);
+    }
+    else if (file.isDirectory())
+    {
+        std::vector<std::string> files; file.list(files);
+        for (size_t i = 0; i < files.size(); i++)
+        {
+            auto subpaths = getPythonFiles(Poco::Path(path, files[i]).absolute());
+            paths.insert(paths.end(), subpaths.begin(), subpaths.end());
+        }
+    }
+
+    return paths;
+}
+
+/***********************************************************************
  * The loader factory opens a python environment,
  * locates the specified module and class (or function),
  * and invokes it with the specified arguments.
  **********************************************************************/
 static Pothos::Object opaquePythonLoaderFactory(
     const Poco::Path &rootPath,
-    const std::string &targetName,
     const std::string &moduleName,
     const std::string &functionName,
     const Pothos::Object *args,
@@ -27,10 +54,18 @@ static Pothos::Object opaquePythonLoaderFactory(
     auto env = Pothos::ProxyEnvironment::make("python");
 
     //add to the system path
-    //TODO only add if not already added...
     auto sys = env->findProxy("sys");
     auto sysPath = sys.callProxy("get:path");
-    sysPath.callProxy("append", rootPath.toString());
+    try
+    {
+        //throws if the path is not found already
+        sysPath.callProxy("index", rootPath.toString());
+    }
+    catch (...)
+    {
+        //and so we add our path here
+        sysPath.callProxy("append", rootPath.toString());
+    }
 
     //convert arguments into proxy environment
     std::vector<Pothos::Proxy> proxyArgs(numArgs);
@@ -62,12 +97,6 @@ static std::vector<Pothos::PluginPath> PythonLoader(const std::map<std::string, 
         throw Pothos::Exception("missing confFilePath");
     const auto rootDir = Poco::Path(confFilePathIt->second).makeParent();
 
-    //config section set by caller
-    const auto confFileSectionIt = config.find("confFileSection");
-    if (confFileSectionIt == config.end() or confFileSectionIt->second.empty())
-        throw Pothos::Exception("missing confFileSection");
-    const auto &target = confFileSectionIt->second;
-
     //extract module name
     const auto moduleIt = config.find("module");
     if (moduleIt == config.end() or moduleIt->second.empty())
@@ -89,7 +118,12 @@ static std::vector<Pothos::PluginPath> PythonLoader(const std::map<std::string, 
         const auto absPath = Poco::Path(docSource).makeAbsolute(rootDir);
         docSources.push_back(absPath.toString());
     }
-    else {} //TODO scan for *.py?
+
+    //otherwise scan all .py files in this directory
+    else for (const auto &path : getPythonFiles(rootDir))
+    {
+        docSources.push_back(path.toString());
+    }
 
     //load the factories: use this when providing no block description
     const auto factoriesIt = config.find("factories");
@@ -117,9 +151,8 @@ static std::vector<Pothos::PluginPath> PythonLoader(const std::map<std::string, 
     {
         const auto factory = Pothos::Callable(&opaquePythonLoaderFactory)
             .bind(rootDir, 0)
-            .bind(target, 1)
-            .bind(module, 2)
-            .bind(function, 3);
+            .bind(module, 1)
+            .bind(function, 2);
         Pothos::PluginRegistry::addCall(pluginPath, factory);
         entries.push_back(pluginPath);
     }
@@ -134,3 +167,5 @@ pothos_static_block(pothosFrameworkRegisterPythonLoader)
 {
     Pothos::PluginRegistry::addCall("/framework/conf_loader/python", &PythonLoader);
 }
+
+#endif //POTHOS_API_VERSION >= 0x00050000
