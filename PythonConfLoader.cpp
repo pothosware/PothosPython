@@ -10,6 +10,7 @@
 #include <Poco/Path.h>
 #include <Poco/File.h>
 #include <Poco/StringTokenizer.h>
+#include <tuple>
 #include <map>
 
 /***********************************************************************
@@ -88,8 +89,9 @@ static Pothos::Object opaquePythonLoaderFactory(
 static std::vector<Pothos::PluginPath> PythonLoader(const std::map<std::string, std::string> &config)
 {
     std::vector<Pothos::PluginPath> entries;
-    std::vector<Pothos::PluginPath> factories;
-    const auto tokOptions = Poco::StringTokenizer::TOK_TRIM | Poco::StringTokenizer::TOK_TRIM;
+    std::vector<std::tuple<Pothos::PluginPath, std::string, std::string>> factories;
+    const auto tokOptions = Poco::StringTokenizer::TOK_IGNORE_EMPTY | Poco::StringTokenizer::TOK_TRIM;
+    const std::string tokSep(" \t");
 
     //config file path set by caller
     const auto confFilePathIt = config.find("confFilePath");
@@ -97,23 +99,11 @@ static std::vector<Pothos::PluginPath> PythonLoader(const std::map<std::string, 
         throw Pothos::Exception("missing confFilePath");
     const auto rootDir = Poco::Path(confFilePathIt->second).makeParent();
 
-    //extract module name
-    const auto moduleIt = config.find("module");
-    if (moduleIt == config.end() or moduleIt->second.empty())
-        throw Pothos::Exception("missing module");
-    const auto &module = moduleIt->second;
-
-    //extract function name (class path or function name)
-    const auto functionIt = config.find("function");
-    if (functionIt == config.end() or functionIt->second.empty())
-        throw Pothos::Exception("missing function");
-    const auto &function = functionIt->second;
-
     //doc sources: scan sources unless doc sources are specified
     std::vector<std::string> docSources;
     const auto docSourcesIt = config.find("doc_sources");
     if (docSourcesIt != config.end()) for (const auto &docSource :
-        Poco::StringTokenizer(docSourcesIt->second, ",", tokOptions))
+        Poco::StringTokenizer(docSourcesIt->second, tokSep, tokOptions))
     {
         const auto absPath = Poco::Path(docSource).makeAbsolute(rootDir);
         docSources.push_back(absPath.toString());
@@ -127,10 +117,20 @@ static std::vector<Pothos::PluginPath> PythonLoader(const std::map<std::string, 
 
     //load the factories: use this when providing no block description
     const auto factoriesIt = config.find("factories");
-    if (factoriesIt != config.end()) for (const auto &factory :
-        Poco::StringTokenizer(factoriesIt->second, ",", tokOptions))
+    if (factoriesIt == config.end()) throw Pothos::Exception("missing factories");
+    for (const auto &factoryMarkup :
+        Poco::StringTokenizer(factoriesIt->second, tokSep, tokOptions))
     {
-        factories.push_back(Pothos::PluginPath("/blocks", factory));
+        const auto colonPos = factoryMarkup.find(':');
+        const auto lastDotPos = factoryMarkup.find_last_of('.');
+        if (colonPos == std::string::npos or lastDotPos == std::string::npos or colonPos > lastDotPos)
+        {
+            throw Pothos::Exception("factory entry not in format /block/path:Module.Function");
+        }
+        const auto path = Pothos::PluginPath("/blocks", factoryMarkup.substr(0, colonPos));
+        const auto module = factoryMarkup.substr(colonPos+1, (lastDotPos-colonPos)-1);
+        const auto function = factoryMarkup.substr(lastDotPos+1);
+        factories.emplace_back(path, module, function);
     }
 
     //generate JSON block descriptions
@@ -143,16 +143,16 @@ static std::vector<Pothos::PluginPath> PythonLoader(const std::map<std::string, 
         const auto pluginPath = Pothos::PluginPath("/blocks/docs", factory);
         Pothos::PluginRegistry::add(pluginPath, parser.getJSONObject(factory));
         entries.push_back(pluginPath);
-        factories.push_back(Pothos::PluginPath("/blocks", factory));
     }
 
     //register for all factory paths
-    for (const auto &pluginPath : factories)
+    for (const auto &factoryTuple : factories)
     {
+        const auto &pluginPath = std::get<0>(factoryTuple);
         const auto factory = Pothos::Callable(&opaquePythonLoaderFactory)
             .bind(rootDir, 0)
-            .bind(module, 1)
-            .bind(function, 2);
+            .bind(std::get<1>(factoryTuple), 1)
+            .bind(std::get<2>(factoryTuple), 2);
         Pothos::PluginRegistry::addCall(pluginPath, factory);
         entries.push_back(pluginPath);
     }
