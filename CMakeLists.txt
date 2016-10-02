@@ -104,6 +104,7 @@ set(SOURCES
    TestPythonBlock.cpp
    PythonBlock.cpp
    ProxyHelpers.cpp
+   PythonConfLoader.cpp
 )
 
 POTHOS_MODULE_UTIL(
