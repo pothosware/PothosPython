@@ -45,7 +45,7 @@ static std::vector<Poco::Path> getPythonFiles(const Poco::Path &path)
  * and invokes it with the specified arguments.
  **********************************************************************/
 static Pothos::Object opaquePythonLoaderFactory(
-    const Poco::Path &rootPath,
+    const std::vector<Poco::Path> &modulePaths,
     const std::string &moduleName,
     const std::string &functionName,
     const Pothos::Object *args,
@@ -57,15 +57,15 @@ static Pothos::Object opaquePythonLoaderFactory(
     //add to the system path
     auto sys = env->findProxy("sys");
     auto sysPath = sys.callProxy("get:path");
-    try
+    for (const auto &path : modulePaths) try
     {
         //throws if the path is not found already
-        sysPath.callProxy("index", rootPath.toString());
+        sysPath.callProxy("index", path.toString());
     }
     catch (...)
     {
         //and so we add our path here
-        sysPath.callProxy("append", rootPath.toString());
+        sysPath.callProxy("append", path.toString());
     }
 
     //convert arguments into proxy environment
@@ -145,12 +145,21 @@ static std::vector<Pothos::PluginPath> PythonLoader(const std::map<std::string, 
         entries.push_back(pluginPath);
     }
 
+    //additional module search paths
+    std::vector<Poco::Path> modulePaths(1, rootDir);
+    const auto pathIt = config.find("path");
+    if (pathIt != config.end()) for (const auto &path :
+        Poco::StringTokenizer(pathIt->second, tokSep, tokOptions))
+    {
+        modulePaths.push_back(Poco::Path(path).makeAbsolute(rootDir));
+    }
+
     //register for all factory paths
     for (const auto &factoryTuple : factories)
     {
         const auto &pluginPath = std::get<0>(factoryTuple);
         const auto factory = Pothos::Callable(&opaquePythonLoaderFactory)
-            .bind(rootDir, 0)
+            .bind(modulePaths, 0)
             .bind(std::get<1>(factoryTuple), 1)
             .bind(std::get<2>(factoryTuple), 2);
         Pothos::PluginRegistry::addCall(pluginPath, factory);
