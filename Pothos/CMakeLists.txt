@@ -44,4 +44,5 @@ install(FILES
     Topology.py
     BlockRegistry.py
     Logger.py
+    Packet.py
     DESTINATION ${POTHOS_PYTHON_DIR}/Pothos)

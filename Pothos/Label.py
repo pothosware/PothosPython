@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2014 Josh Blum
+# Copyright (c) 2014-2016 Josh Blum
 # SPDX-License-Identifier: BSL-1.0
 
 from . PothosModule import *
@@ -8,6 +8,13 @@ class Label(object):
         self.id = id
         self.data = data
         self.index = index
+
+    def toProxy(self, env):
+        """
+        Convert to a Pothos::Label Proxy object.
+        """
+        cls = env.findProxy("Pothos/Label")
+        return cls(self.id, self.data, self.index)
 
 class LabelIteratorRange(object):
     def __init__(self, labelIter):

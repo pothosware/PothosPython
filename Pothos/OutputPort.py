@@ -4,12 +4,15 @@
 from . PothosModule import *
 from . Buffer import pointer_to_ndarray
 from . Buffer import dtype_to_numpy
+from . Buffer import numpy_to_chunk
 from . Label import Label
+from . Packet import Packet
 import numpy
 
 class OutputPort(object):
     def __init__(self, port):
         self._port = port
+        self._env = self._port.getEnvironment()
 
     def __getattr__(self, name):
         return lambda *args: self._port.call(name, *args)
@@ -24,17 +27,19 @@ class OutputPort(object):
         return pointer_to_ndarray(addr, nitems, dtype, readonly=False)
 
     def postBuffer(self, buffer):
-        raise NotImplementedError("postBuffer not implemented")
+        self._port.postBuffer(numpy_to_chunk(self._env, buffer))
 
     def postLabel(self, label):
         if isinstance(label, Proxy):# and label.getClassName() == "Pothos::Label":
             self._port.postLabel(label)
         elif isinstance(label, Label):
-            cls = self._port.getEnvironment().findProxy("Pothos/Label")
-            label = cls(label.id, label.data, label.index)
-            self._port.postLabel(label)
+            self._port.postLabel(label.toProxy(self._env))
         else:
             raise Exception('OutputPort.postLabel - unknown type %s'%type(label))
 
     def postMessage(self, message):
-        self._port.postMessage(message)
+        #special handling for known wrapped types
+        if isinstance(message, Packet):
+            self._port.postMessage(message.toProxy(self._env))
+        else:
+            self._port.postMessage(message)
