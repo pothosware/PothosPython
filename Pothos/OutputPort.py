@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2014 Josh Blum
+# Copyright (c) 2014-2016 Josh Blum
 # SPDX-License-Identifier: BSL-1.0
 
 from . PothosModule import *
@@ -31,7 +31,7 @@ class OutputPort(object):
             self._port.postLabel(label)
         elif isinstance(label, Label):
             cls = self._port.getEnvironment().findProxy("Pothos/Label")
-            label = cls.new(label.data, label.index)
+            label = cls(label.id, label.data, label.index)
             self._port.postLabel(label)
         else:
             raise Exception('OutputPort.postLabel - unknown type %s'%type(label))
