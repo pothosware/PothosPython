@@ -43,4 +43,5 @@ install(FILES
     TestPothos.py
     Topology.py
     BlockRegistry.py
+    Logger.py
     DESTINATION ${POTHOS_PYTHON_DIR}/Pothos)
