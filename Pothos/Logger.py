@@ -20,4 +20,4 @@ class LogHandler(logging.Handler):
             logging.DEBUG:'DEBUG',
             logging.NOTSET:'NOTSET',
         }[record.levelno]
-        self._logger.log(record.name, record.msg, level)
+        self._logger.log(record.name, str(record.msg), level)
