@@ -105,6 +105,7 @@ set(SOURCES
    PythonBlock.cpp
    ProxyHelpers.cpp
    PythonConfLoader.cpp
+   PythonLogger.cpp
 )
 
 POTHOS_MODULE_UTIL(

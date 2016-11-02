@@ -8,3 +8,4 @@ from . InputPort import InputPort
 from . OutputPort import OutputPort
 from . Topology import Topology
 from . BlockRegistry import BlockRegistry
+from . Logger import LogHandler
