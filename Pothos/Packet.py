@@ -3,7 +3,7 @@
 
 from . PothosModule import *
 #from . Label import Label
-from . Buffer import numpy_to_chunk
+#from . Buffer import numpy_to_chunk
 
 class Packet(object):
     def __init__(self):

@@ -5,7 +5,8 @@ import numpy
 
 def dtype_to_numpy(dtype):
     name = dtype.name()
-    shape = [dtype.dimension()]
+    if dtype.dimension() == 1: shape = []
+    else: shape = [dtype.dimension()]
 
     #support numpy float-complex types
     if name == 'complex_float32': name = "complex64"
@@ -29,13 +30,3 @@ def pointer_to_ndarray(addr, nitems, dtype=numpy.dtype(numpy.uint8), readonly=Fa
             'version' : 3,
         }
     return numpy.asarray(array_like()).view(dtype.base)
-
-def numpy_to_chunk(env, arr):
-    numElems = arr.shape[0]
-    dimension = 1
-    if len(arr.shape) > 1: dimension = arr.shape[1]
-    dtypeStr = '%s,%d'%(arr.dtype.name, dimension)
-    cls = env.findProxy("Pothos/BufferChunk")
-    chunk = cls(dtypeStr, numElems)
-    pointer_to_ndarray(chunk.address, numElems, arr.dtype)[:] = arr
-    return chunk

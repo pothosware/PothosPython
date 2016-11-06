@@ -106,6 +106,7 @@ set(SOURCES
    ProxyHelpers.cpp
    PythonConfLoader.cpp
    PythonLogger.cpp
+   FrameworkTypes.cpp
 )
 
 POTHOS_MODULE_UTIL(

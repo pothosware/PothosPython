@@ -3,6 +3,7 @@
 
 import Pothos
 import unittest
+import numpy as np
 
 class TestPothosModule(unittest.TestCase):
 
@@ -58,6 +59,32 @@ class TestPothosModule(unittest.TestCase):
 
         #using the wrapper
         print(Pothos.BlockRegistry("/blocks/feeder_source", "int"))
+
+    def test_int_buffer(self):
+        npArr0 = np.array([1, 2, 3], np.int32)
+        localBuffer0 = self.env.convertObjectToProxy(npArr0)
+        print('localBuffer0 = %s'%localBuffer0)
+
+        self.assertEqual(localBuffer0.dtype.size(), 4)
+        self.assertEqual(localBuffer0.address, npArr0.__array_interface__['data'][0])
+
+        npArr1 = self.env.convertProxyToObject(localBuffer0)
+        print('npArr1 = %s'%npArr1)
+        self.assertEqual(npArr0.dtype, npArr1.dtype)
+        np.testing.assert_array_equal(npArr0, npArr1)
+
+    def test_complex_float_buffer(self):
+        npArr0 = np.array([1, 2-1j, 3j], np.complex64)
+        localBuffer0 = self.env.convertObjectToProxy(npArr0)
+        print('localBuffer0 = %s'%localBuffer0)
+
+        self.assertEqual(localBuffer0.dtype.size(), 8)
+        self.assertEqual(localBuffer0.address, npArr0.__array_interface__['data'][0])
+
+        npArr1 = self.env.convertProxyToObject(localBuffer0)
+        print('npArr1 = %s'%npArr1)
+        self.assertEqual(npArr0.dtype, npArr1.dtype)
+        np.testing.assert_array_equal(npArr0, npArr1)
 
 try: from StringIO import StringIO
 except ImportError: from io import StringIO

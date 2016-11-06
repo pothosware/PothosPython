@@ -20,12 +20,6 @@ class InputPort(object):
     def dtype(self):
         return dtype_to_numpy(self._port.dtype())
 
-    def buffer(self):
-        addr = self._port.buffer().address
-        nitems = self._port.elements()
-        dtype = self.dtype()
-        return pointer_to_ndarray(addr, nitems, dtype, readonly=True)
-
     def removeLabel(self, label):
         if isinstance(label, Proxy):# and label.getClassName() == "Pothos::Label":
             return self._port.removeLabel(label)
