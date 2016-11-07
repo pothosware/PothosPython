@@ -3,6 +3,8 @@ This this the changelog file for the Pothos Python toolkit.
 Release 0.3.0 (pending)
 ==========================
 
+- Support native use of Pothos::Label object in Python
+- Support Pothos::BufferChunk to/from numpy conversions
 - Python log handler that integrates with Poco logger
 - Added conf loader plugin for python-based projects
 
