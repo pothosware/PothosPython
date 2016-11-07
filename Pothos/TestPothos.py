@@ -86,6 +86,11 @@ class TestPothosModule(unittest.TestCase):
         self.assertEqual(npArr0.dtype, npArr1.dtype)
         np.testing.assert_array_equal(npArr0, npArr1)
 
+    def test_packet_type(self):
+        pkt0 = Pothos.Packet()
+        pkt0.payload = np.array([1, 2, 3], np.int32)
+        #TODO test labels
+
 try: from StringIO import StringIO
 except ImportError: from io import StringIO
 
