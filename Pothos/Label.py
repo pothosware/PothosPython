@@ -3,18 +3,8 @@
 
 from . PothosModule import *
 
-class Label(object):
-    def __init__(self, id, data, index):
-        self.id = id
-        self.data = data
-        self.index = index
-
-    def toProxy(self, env):
-        """
-        Convert to a Pothos::Label Proxy object.
-        """
-        cls = env.findProxy("Pothos/Label")
-        return cls(self.id, self.data, self.index)
+env = ProxyEnvironment("managed")
+Label = env.findProxy('Pothos/Label')
 
 class LabelIteratorRange(object):
     def __init__(self, labelIter):

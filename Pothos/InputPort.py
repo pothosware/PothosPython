@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2014 Josh Blum
+# Copyright (c) 2014-2016 Josh Blum
 # SPDX-License-Identifier: BSL-1.0
 
 from . PothosModule import *
@@ -19,8 +19,3 @@ class InputPort(object):
 
     def dtype(self):
         return dtype_to_numpy(self._port.dtype())
-
-    def removeLabel(self, label):
-        if isinstance(label, Proxy):# and label.getClassName() == "Pothos::Label":
-            return self._port.removeLabel(label)
-        raise Exception('InputPort.removeLabel - label must come from a label iterator')

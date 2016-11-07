@@ -18,18 +18,3 @@ class OutputPort(object):
 
     def dtype(self):
         return dtype_to_numpy(self._port.dtype())
-
-    def postLabel(self, label):
-        if isinstance(label, Proxy):# and label.getClassName() == "Pothos::Label":
-            self._port.postLabel(label)
-        elif isinstance(label, Label):
-            self._port.postLabel(label.toProxy(self._env))
-        else:
-            raise Exception('OutputPort.postLabel - unknown type %s'%type(label))
-
-    def postMessage(self, message):
-        #special handling for known wrapped types
-        if isinstance(message, Packet):
-            self._port.postMessage(message.toProxy(self._env))
-        else:
-            self._port.postMessage(message)
