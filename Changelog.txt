@@ -1,6 +1,6 @@
 This this the changelog file for the Pothos Python toolkit.
 
-Release 0.2.2 (pending)
+Release 0.2.2 (2016-11-24)
 ==========================
 
 - Fix OutputPort postLabel for Labels created in python

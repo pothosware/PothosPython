@@ -1,3 +1,9 @@
+pothos-python (0.2.2-ppa1) unstable; urgency=low
+
+  * Release 0.2.2 (2016-11-24)
+
+ -- Josh Blum <josh@pothosware.com>  Thu, 24 Nov 2016 23:22:02 -0500
+
 pothos-python (0.2.1) unstable; urgency=low
 
   * Release 0.2.1 (2016-08-19)
