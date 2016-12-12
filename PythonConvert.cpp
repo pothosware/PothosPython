@@ -5,6 +5,7 @@
 #include <cassert>
 #include <complex>
 #include <iostream>
+#include <Poco/Types.h>
 #include "PythonProxy.hpp"
 
 /***********************************************************************
@@ -81,12 +82,20 @@ static Pothos::Proxy convertIntNumToPyInt(Pothos::ProxyEnvironment::Sptr env, co
     #endif
 }
 
-static long convertPyIntToLong(const Pothos::Proxy &proxy)
+static long long convertPyIntToLongLong(const Pothos::Proxy &proxy)
 {
+    //python3 has only PyLong functions and we always convert to long long
     #if PY_MAJOR_VERSION >= 3
-    return PyLong_AsLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
-    #else
+    return PyLong_AsLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
+
+    //python2 when long is 64-bit, we can use the PyInt_AsLong function
+    #elif POCO_LONG_IS_64_BIT
     return PyInt_AsLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
+
+    //otherwise, convert to PyLong since there isnt a PyInt conversion to 64-bit integer
+    #else
+    return PyLong_AsLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
+
     #endif
 }
 
@@ -114,8 +123,8 @@ pothos_static_block(pothosRegisterPythonIntConversions)
     Pothos::PluginRegistry::addCall("/proxy/converters/python/ulong_to_pyint",
         &convertIntNumToPyInt<unsigned long>);
 
-    Pothos::PluginRegistry::add("/proxy/converters/python/pyint_to_long",
-        Pothos::ProxyConvertPair("int", &convertPyIntToLong));
+    Pothos::PluginRegistry::add("/proxy/converters/python/pyint_to_llong",
+        Pothos::ProxyConvertPair("int", &convertPyIntToLongLong));
 }
 
 /***********************************************************************
