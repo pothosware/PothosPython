@@ -22,9 +22,9 @@ execute_process(
     COMMAND ${PYTHON_EXECUTABLE} -c
     "from distutils.sysconfig import get_python_lib; print(get_python_lib(plat_specific=True, prefix=''))"
     OUTPUT_STRIP_TRAILING_WHITESPACE
-    OUTPUT_VARIABLE POTHOS_PYTHON_DIR
+    OUTPUT_VARIABLE POTHOS_PYTHON_DIR_SYSCONF
 )
-set(POTHOS_PYTHON_DIR ${POTHOS_PYTHON_DIR} CACHE STRING "python install prefix")
+set(POTHOS_PYTHON_DIR "${POTHOS_PYTHON_DIR_SYSCONF}" CACHE STRING "python install prefix")
 
 file(TO_CMAKE_PATH "${POTHOS_PYTHON_DIR}" POTHOS_PYTHON_DIR)
 message(STATUS "POTHOS_PYTHON_DIR: \${prefix}/${POTHOS_PYTHON_DIR}")
