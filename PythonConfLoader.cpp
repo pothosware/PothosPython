@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2016 Josh Blum
+// Copyright (c) 2016-2017 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/System/Version.hpp>
@@ -57,15 +57,18 @@ static Pothos::Object opaquePythonLoaderFactory(
     //add to the system path
     auto sys = env->findProxy("sys");
     auto sysPath = sys.callProxy("get:path");
-    for (const auto &path : modulePaths) try
+    for (const auto &path : modulePaths)
     {
-        //throws if the path is not found already
-        sysPath.callProxy("index", path.toString());
-    }
-    catch (...)
-    {
-        //and so we add our path here
-        sysPath.callProxy("append", path.toString());
+        try
+        {
+            //throws if the path is not found already
+            sysPath.callProxy("index", path.toString());
+        }
+        catch (...)
+        {
+            //and so we add our path here
+            sysPath.callProxy("append", path.toString());
+        }
     }
 
     //convert arguments into proxy environment
