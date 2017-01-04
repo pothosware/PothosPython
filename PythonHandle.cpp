@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2016 Josh Blum
+// Copyright (c) 2013-2017 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Poco/Format.h>
@@ -58,9 +58,21 @@ std::string PythonProxyHandle::toString(void) const
 std::string PythonProxyHandle::getClassName(void) const
 {
     PyGilStateLock lock;
-    PyObjectRef type(PyObject_Type(obj), REF_NEW);
-    PyObjectRef name(PyObject_GetAttrString(type.obj, "__name__"), REF_NEW);
-    return PyObjToStdString(name.obj);
+
+    PyObjectRef cls(PyObject_GetAttrString(obj, "__class__"), REF_NEW);
+    PyObjectRef clsName(PyObject_GetAttrString(cls.obj, "__name__"), REF_NEW);
+    PyObjectRef modName(PyObject_GetAttrString(cls.obj, "__module__"), REF_NEW);
+
+    const auto clsNameStr = PyObjToStdString(clsName.obj);
+    const auto modNameStr = PyObjToStdString(modName.obj);
+
+    #if PY_MAJOR_VERSION >= 3
+    if (modNameStr == "builtins") return clsNameStr;
+    #else
+    if (modNameStr == "__builtin__") return clsNameStr;
+    #endif
+
+    return modNameStr + "." + clsNameStr;
 }
 
 Pothos::Proxy PythonProxyHandle::call(const std::string &name, const Pothos::Proxy *args, const size_t numArgs)

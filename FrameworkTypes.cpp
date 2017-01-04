@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2016 Josh Blum
+// Copyright (c) 2016-2017 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Plugin.hpp>
@@ -39,5 +39,5 @@ pothos_static_block(pothosRegisterNumpyBufferConversions)
     Pothos::PluginRegistry::addCall("/proxy/converters/python/buffer_chunk_to_numpy_array",
         &convertBufferChunkToNumpyArray);
     Pothos::PluginRegistry::add("/proxy/converters/python/numpy_array_to_buffer_chunk",
-        Pothos::ProxyConvertPair("ndarray", &convertNumpyArrayToBufferChunk));
+        Pothos::ProxyConvertPair("numpy.ndarray", &convertNumpyArrayToBufferChunk));
 }
