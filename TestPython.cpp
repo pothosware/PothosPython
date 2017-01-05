@@ -1,12 +1,14 @@
-// Copyright (c) 2013-2016 Josh Blum
+// Copyright (c) 2013-2017 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Testing.hpp>
 #include <Pothos/Proxy.hpp>
+#include <Pothos/Framework/BufferChunk.hpp>
 #include <iostream>
 #include <complex>
 #include <cstdlib>
 #include <sstream>
+#include <complex>
 
 POTHOS_TEST_BLOCK("/proxy/python/tests", test_basic_types)
 {
@@ -161,4 +163,36 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_serialization)
     auto find1 = resultDict.find(env->makeProxy(1));
     POTHOS_TEST_TRUE(find1 != resultDict.end());
     POTHOS_TEST_EQUAL(find1->second.convert<int>(), 2);
+}
+
+POTHOS_TEST_BLOCK("/proxy/python/tests", test_numpy_array)
+{
+    auto env = Pothos::ProxyEnvironment::make("python");
+
+    Pothos::BufferChunk buffIn(typeid(float), 100);
+    for (size_t i = 0; i < buffIn.elements(); i++)
+        buffIn.as<float *>()[i] = float(std::rand());
+
+    //convert into a python format with numpy
+    auto pyBuff = env->makeProxy(buffIn);
+    POTHOS_TEST_EQUAL(pyBuff.getClassName(), "numpy.ndarray");
+
+    //convert back and check for equality
+    const auto buffOut = pyBuff.convert<Pothos::BufferChunk>();
+    POTHOS_TEST_EQUAL(buffIn.elements(), buffOut.elements());
+    POTHOS_TEST_EQUAL(buffIn.dtype, buffOut.dtype);
+    POTHOS_TEST_EQUALA(buffIn.as<const float *>(), buffOut.as<const float *>(), buffOut.elements());
+}
+
+POTHOS_TEST_BLOCK("/proxy/python/tests", test_numpy_types)
+{
+    auto env = Pothos::ProxyEnvironment::make("python");
+    auto numpy = env->findProxy("numpy");
+
+    POTHOS_TEST_EQUAL(numpy.callProxy("int16", 123).convert<short>(), 123);
+    POTHOS_TEST_EQUAL(numpy.callProxy("int32", 123).convert<int>(), 123);
+    POTHOS_TEST_EQUAL(numpy.callProxy("float32", 42.0f).convert<float>(), 42.0f);
+    POTHOS_TEST_EQUAL(numpy.callProxy("float64", 42.0).convert<double>(), 42.0);
+    POTHOS_TEST_EQUAL(numpy.callProxy("complex64", std::complex<float>(1.0f, -2.0f)).convert<std::complex<float>>(), std::complex<float>(1.0f, -2.0f));
+    POTHOS_TEST_EQUAL(numpy.callProxy("complex128", std::complex<double>(1.0, -2.0)).convert<std::complex<double>>(), std::complex<double>(1.0, -2.0));
 }
