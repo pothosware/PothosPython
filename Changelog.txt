@@ -1,6 +1,6 @@
 This this the changelog file for the Pothos Python toolkit.
 
-Release 0.2.3 (pending)
+Release 0.2.3 (2017-04-23)
 ==========================
 
 - Fix for cache overwrite of POTHOS_PYTHON_DIR variable
