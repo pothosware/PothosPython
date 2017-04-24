@@ -9,7 +9,7 @@ Release 0.3.0 (pending)
 - Python log handler that integrates with Poco logger
 - Added conf loader plugin for python-based projects
 
-Release 0.2.3 (pending)
+Release 0.2.3 (2017-04-23)
 ==========================
 
 - Fix for cache overwrite of POTHOS_PYTHON_DIR variable
