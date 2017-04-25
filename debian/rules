@@ -10,7 +10,7 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 # create generated install files with the multi-arch directory
 # this is needed due to --destdir and use of wildcard matching
 GENERATED_INSTALL_FILES := \
-	debian/pothos0.4-3-modules-python3.install
+	debian/pothos0.5-modules-python3.install
 
 debian/%.install: debian/%.install.in
 	sed 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g' $< > $@

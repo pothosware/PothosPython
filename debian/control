@@ -11,17 +11,17 @@ Build-Depends:
     python-dev,
     python3,
     python3-dev
-Standards-Version: 3.9.7
+Standards-Version: 3.9.8
 Homepage: https://github.com/pothosware/pothos-python/wiki
 Vcs-Git: https://github.com/pothosware/pothos-python.git
 Vcs-Browser: https://github.com/pothosware/pothos-python
 
-Package: pothos0.4-3-modules-python
+Package: pothos0.5-modules-python
 Section: libs
 Architecture: any
 Multi-Arch: same
-Replaces: pothos0.4-3-modules-python3
-Conflicts: pothos0.4-3-modules-python3
+Replaces: pothos0.5-modules-python3
+Conflicts: pothos0.5-modules-python3
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Python language bindings - plugins
@@ -33,7 +33,7 @@ Architecture: any
 Replaces: python3-pothos
 Conflicts: python3-pothos
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${shlibs:Depends}, ${misc:Depends}, python-numpy, pothos0.4-3-modules-python
+Depends: ${shlibs:Depends}, ${misc:Depends}, python-numpy, pothos0.5-modules-python
 Recommends: pothos-python-dev
 Description: Python language bindings - python module
  The Pothos data-flow software suite.
@@ -46,12 +46,12 @@ Depends: ${misc:Depends}, libpothos-dev
 Description: Python language bindings - development files
  The Pothos data-flow software suite.
 
-Package: pothos0.4-3-modules-python3
+Package: pothos0.5-modules-python3
 Section: libs
 Architecture: any
 Multi-Arch: same
-Replaces: pothos0.4-3-modules-python
-Conflicts: pothos0.4-3-modules-python
+Replaces: pothos0.5-modules-python
+Conflicts: pothos0.5-modules-python
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Python3 language bindings - plugins
@@ -63,7 +63,7 @@ Architecture: any
 Replaces: python-pothos
 Conflicts: python-pothos
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${shlibs:Depends}, ${misc:Depends}, python3-numpy, pothos0.4-3-modules-python3
+Depends: ${shlibs:Depends}, ${misc:Depends}, python3-numpy, pothos0.5-modules-python3
 Recommends: pothos-python-dev
 Description: Python3 language bindings - python module
  The Pothos data-flow software suite.
