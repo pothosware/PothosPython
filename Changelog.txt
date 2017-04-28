@@ -1,6 +1,6 @@
 This this the changelog file for the Pothos Python toolkit.
 
-Release 0.3.0 (pending)
+Release 0.3.0 (2017-04-27)
 ==========================
 
 - Support native use of Pothos::Label object in Python
