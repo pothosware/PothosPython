@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.8.9)
 project(PothosPython CXX)
 
 if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
-    find_package(Pothos "0.4.0" CONFIG REQUIRED)
+    find_package(Pothos "0.6.0" CONFIG REQUIRED)
 else()
     find_package(Pothos CONFIG REQUIRED) #in-tree build
 endif()
@@ -74,11 +74,20 @@ if (PYTHON_VERSION_STRING AND PYTHONLIBS_VERSION_STRING)
 endif()
 
 ########################################################################
+# json.hpp header
+########################################################################
+find_path(JSON_HPP_INCLUDE_DIR NAMES json.hpp PATH_SUFFIXES nlohmann)
+
+if (NOT JSON_HPP_INCLUDE_DIR)
+    message(WARNING "Pothos Python toolkit requires json.hpp, skipping...")
+endif (NOT JSON_HPP_INCLUDE_DIR)
+
+########################################################################
 ## Feature registration
 ########################################################################
 include(FeatureSummary)
 include(CMakeDependentOption)
-cmake_dependent_option(ENABLE_PYTHON "Enable Pothos Python component" ON "Pothos_FOUND;PYTHONLIBS_FOUND;PYTHON_DEBUG_OK;POTHOS_PYTHON_DIR" OFF)
+cmake_dependent_option(ENABLE_PYTHON "Enable Pothos Python component" ON "Pothos_FOUND;PYTHONLIBS_FOUND;PYTHON_DEBUG_OK;POTHOS_PYTHON_DIR;JSON_HPP_INCLUDE_DIR" OFF)
 add_feature_info(Python ENABLE_PYTHON "Python bindings for the Pothos framework")
 if (NOT ENABLE_PYTHON)
     return()

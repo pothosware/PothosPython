@@ -1,12 +1,14 @@
-// Copyright (c) 2014-2016 Josh Blum
+// Copyright (c) 2014-2017 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Framework.hpp>
 #include <Pothos/Managed.hpp>
 #include <Pothos/Testing.hpp>
 #include <Pothos/Proxy.hpp>
-#include <Poco/JSON/Object.h>
 #include <iostream>
+#include <json.hpp>
+
+using json = nlohmann::json;
 
 POTHOS_TEST_BLOCK("/proxy/python/tests", python_module_import)
 {
@@ -27,11 +29,11 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_python_block)
     auto forwarder = Pothos::BlockRegistry::make("/python/forwarder", Pothos::DType("int"));
 
     //create a test plan
-    Poco::JSON::Object::Ptr testPlan(new Poco::JSON::Object());
-    testPlan->set("enableBuffers", true);
-    testPlan->set("enableLabels", true);
-    testPlan->set("enableMessages", true);
-    auto expected = feeder.callProxy("feedTestPlan", testPlan);
+    json testPlan;
+    testPlan["enableBuffers"] = true;
+    testPlan["enableLabels"] = true;
+    testPlan["enableMessages"] = true;
+    auto expected = feeder.callProxy("feedTestPlan", testPlan.dump());
 
     //run the topology
     {
