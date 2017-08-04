@@ -97,6 +97,7 @@ endif()
 ## Python<->Pothos proxy wrapper
 ########################################################################
 include_directories(${PYTHON_INCLUDE_DIRS})
+include_directories(${JSON_HPP_INCLUDE_DIR})
 
 #generate include with build configuration params
 configure_file(
