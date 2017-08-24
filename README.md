@@ -1,5 +1,9 @@
 # Python bindings for the Pothos framework
 
+## Documentation
+
+* https://github.com/pothosware/PothosPython/wiki
+
 ## Dependencies
 
 * Pothos library

@@ -13,9 +13,9 @@ Build-Depends:
     python3,
     python3-dev
 Standards-Version: 3.9.8
-Homepage: https://github.com/pothosware/pothos-python/wiki
-Vcs-Git: https://github.com/pothosware/pothos-python.git
-Vcs-Browser: https://github.com/pothosware/pothos-python
+Homepage: https://github.com/pothosware/PothosPython/wiki
+Vcs-Git: https://github.com/pothosware/PothosPython.git
+Vcs-Browser: https://github.com/pothosware/PothosPython
 
 Package: pothos0.5-modules-python
 Section: libs
