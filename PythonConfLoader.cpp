@@ -56,18 +56,18 @@ static Pothos::Object opaquePythonLoaderFactory(
 
     //add to the system path
     auto sys = env->findProxy("sys");
-    auto sysPath = sys.callProxy("get:path");
+    auto sysPath = sys.call("get:path");
     for (const auto &path : modulePaths)
     {
         try
         {
             //throws if the path is not found already
-            sysPath.callProxy("index", path.toString());
+            sysPath.call("index", path.toString());
         }
         catch (...)
         {
             //and so we add our path here
-            sysPath.callProxy("append", path.toString());
+            sysPath.call("append", path.toString());
         }
     }
 

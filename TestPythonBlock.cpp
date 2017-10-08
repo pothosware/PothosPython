@@ -19,7 +19,7 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", python_module_import)
 POTHOS_TEST_BLOCK("/proxy/python/tests", test_python_module)
 {
     auto env = Pothos::ProxyEnvironment::make("python");
-    env->findProxy("Pothos.TestPothos").callProxy("main");
+    env->findProxy("Pothos.TestPothos").call("main");
 }
 
 POTHOS_TEST_BLOCK("/proxy/python/tests", test_python_block)
@@ -33,7 +33,7 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_python_block)
     testPlan["enableBuffers"] = true;
     testPlan["enableLabels"] = true;
     testPlan["enableMessages"] = true;
-    auto expected = feeder.callProxy("feedTestPlan", testPlan.dump());
+    auto expected = feeder.call("feedTestPlan", testPlan.dump());
 
     //run the topology
     {
@@ -45,7 +45,7 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_python_block)
         POTHOS_TEST_TRUE(topology.waitInactive(0.5, 5.0));
     }
 
-    collector.callVoid("verifyTestPlan", expected);
+    collector.call("verifyTestPlan", expected);
     std::cout << "run done\n";
 }
 
@@ -65,6 +65,6 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_signals_and_slots)
         POTHOS_TEST_TRUE(topology.waitInactive());
     }
 
-    auto lastWord = acceptor.call<std::string>("getLastWord");
+    std::string lastWord = acceptor.call("getLastWord");
     POTHOS_TEST_EQUAL(lastWord, "hello");
 }

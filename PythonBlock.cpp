@@ -25,22 +25,22 @@ public:
 
     void work(void)
     {
-        _block.callProxy("work");
+        _block.call("work");
     }
 
     void activate(void)
     {
-        _block.callProxy("activate");
+        _block.call("activate");
     }
 
     void deactivate(void)
     {
-        _block.callProxy("deactivate");
+        _block.call("deactivate");
     }
 
     void propagateLabels(const Pothos::InputPort *input, const Pothos::LabelIteratorRange &labels)
     {
-        _block.callProxy("propagateLabelsAdaptor", input, labels);
+        _block.call("propagateLabelsAdaptor", input, labels);
     }
 
     Pothos::Object opaqueCallHandler(const std::string &name, const Pothos::Object *inputArgs, const size_t numArgs)

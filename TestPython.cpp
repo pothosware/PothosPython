@@ -120,8 +120,8 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_call_module)
     auto env = Pothos::ProxyEnvironment::make("python");
 
     auto re = env->findProxy("re");
-    auto m = re.callProxy("search", "(?<=abc)def", "abcdef");
-    auto group = m.call<std::string>("group", 0);
+    auto m = re.call("search", "(?<=abc)def", "abcdef");
+    std::string group = m.call("group", 0);
     POTHOS_TEST_EQUAL(group, "def");
 
     Pothos::ProxyMap myDict;
@@ -189,10 +189,10 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_numpy_types)
     auto env = Pothos::ProxyEnvironment::make("python");
     auto numpy = env->findProxy("numpy");
 
-    POTHOS_TEST_EQUAL(numpy.callProxy("int16", 123).convert<short>(), 123);
-    POTHOS_TEST_EQUAL(numpy.callProxy("int32", 123).convert<int>(), 123);
-    POTHOS_TEST_EQUAL(numpy.callProxy("float32", 42.0f).convert<float>(), 42.0f);
-    POTHOS_TEST_EQUAL(numpy.callProxy("float64", 42.0).convert<double>(), 42.0);
-    POTHOS_TEST_EQUAL(numpy.callProxy("complex64", std::complex<float>(1.0f, -2.0f)).convert<std::complex<float>>(), std::complex<float>(1.0f, -2.0f));
-    POTHOS_TEST_EQUAL(numpy.callProxy("complex128", std::complex<double>(1.0, -2.0)).convert<std::complex<double>>(), std::complex<double>(1.0, -2.0));
+    POTHOS_TEST_EQUAL(numpy.call("int16", 123).convert<short>(), 123);
+    POTHOS_TEST_EQUAL(numpy.call("int32", 123).convert<int>(), 123);
+    POTHOS_TEST_EQUAL(numpy.call("float32", 42.0f).convert<float>(), 42.0f);
+    POTHOS_TEST_EQUAL(numpy.call("float64", 42.0).convert<double>(), 42.0);
+    POTHOS_TEST_EQUAL(numpy.call("complex64", std::complex<float>(1.0f, -2.0f)).convert<std::complex<float>>(), std::complex<float>(1.0f, -2.0f));
+    POTHOS_TEST_EQUAL(numpy.call("complex128", std::complex<double>(1.0, -2.0)).convert<std::complex<double>>(), std::complex<double>(1.0, -2.0));
 }

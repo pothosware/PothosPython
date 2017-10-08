@@ -103,7 +103,7 @@ void PythonProxyEnvironment::serialize(const Pothos::Proxy &proxy, std::ostream 
     try
     {
         auto marshal = this->findProxy("marshal");
-        const auto data = marshal.call<std::vector<char>>("dumps", proxy);
+        const std::vector<char> data = marshal.call("dumps", proxy);
         os.write(data.data(), data.size());
     }
     catch (const Pothos::Exception &ex)
@@ -123,7 +123,7 @@ Pothos::Proxy PythonProxyEnvironment::deserialize(std::istream &is)
     try
     {
         auto marshal = this->findProxy("marshal");
-        return marshal.callProxy("loads", bytes);
+        return marshal.call("loads", bytes);
     }
     catch (const Pothos::Exception &ex)
     {
@@ -144,13 +144,13 @@ Pothos::ProxyEnvironment::Sptr makePythonProxyEnvironment(const Pothos::ProxyEnv
     getPythonInterpWrapper();
 
     auto sys = env->findProxy("sys");
-    sys.callProxy("set:dont_write_bytecode", true);
+    sys.call("set:dont_write_bytecode", true);
 
     Poco::Path pythonPath(Pothos::System::getRootPath());
     pythonPath.append(POTHOS_PYTHON_DIR);
 
-    auto sysPath = sys.callProxy("get:path");
-    sysPath.callProxy("append", pythonPath.toString());
+    auto sysPath = sys.call("get:path");
+    sysPath.call("append", pythonPath.toString());
 
     env->findProxy("Pothos"); //registers important converters
 

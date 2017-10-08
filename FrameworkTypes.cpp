@@ -25,7 +25,7 @@ static Pothos::BufferChunk convertNumpyArrayToBufferChunk(const Pothos::Proxy &n
     const size_t dimension = (shape.size() > 1)? shape.at(1).convert<size_t>() : 1;
     const auto dtypeName = npArray.get("dtype").get<std::string>("name");
     const Pothos::DType dtype(dtypeName, dimension);
-    const auto address = npArray.get("__array_interface__").callProxy("get", "data").call<size_t>("__getitem__", 0);
+    const size_t address = npArray.get("__array_interface__").call("get", "data").call("__getitem__", 0);
 
     //create a shared buffer that holds the numpy array
     auto sharedBuff = Pothos::SharedBuffer(address, numBytes, npArray.getHandle());
