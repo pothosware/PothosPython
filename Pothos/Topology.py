@@ -1,12 +1,12 @@
-# Copyright (c) 2016-2016 Josh Blum
+# Copyright (c) 2016-2018 Josh Blum
 # SPDX-License-Identifier: BSL-1.0
 
 from . PothosModule import *
 
 class Topology(object):
-    def __init__(self):
+    def __init__(self, *args):
         env = ProxyEnvironment("managed")
-        self._topology = env.findProxy('Pothos/Topology').make()
+        self._topology = env.findProxy('Pothos/Topology').make(*args)
 
     def connect(self, src, srcPort, dst, dstPort):
         return self._topology.connect(src, str(srcPort), dst, str(dstPort))
