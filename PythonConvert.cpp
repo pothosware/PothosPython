@@ -99,15 +99,6 @@ static EnableIfSigned<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEnviro
     return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyInt_FromLong(long(num)), REF_NEW);
     #endif
 }
-template <typename T>
-static EnableIfSigned<T, T> convertPyNumToIntNum(const Pothos::Proxy &proxy)
-{
-    #if PY_MAJOR_VERSION >= 3
-    return static_cast<T>(PyLong_AsLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
-    #else
-    return static_cast<T>(PyInt_AsLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
-    #endif
-}
 
 template <typename T>
 static EnableIfUnsigned<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEnvironment::Sptr env, const T &num)
@@ -118,36 +109,17 @@ static EnableIfUnsigned<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEnvi
     return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyInt_FromUnsignedLong((unsigned long)(num)), REF_NEW);
     #endif
 }
-template <typename T>
-static EnableIfUnsigned<T, T> convertPyNumToIntNum(const Pothos::Proxy &proxy)
-{
-    #if PY_MAJOR_VERSION >= 3
-    return static_cast<T>(PyLong_AsUnsignedLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
-    #else
-    return static_cast<T>(PyInt_AsUnsignedLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
-    #endif
-}
 
 template <typename T>
 static EnableIfSigned64<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEnvironment::Sptr env, const T &num)
 {
     return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyLong_FromLongLong((long long)num), REF_NEW);
 }
-template <typename T>
-static EnableIfSigned64<T, T> convertPyNumToIntNum(const Pothos::Proxy &proxy)
-{
-    return static_cast<T>(PyLong_AsLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
-}
 
 template <typename T>
 static EnableIfUnsigned64<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEnvironment::Sptr env, const T &num)
 {
     return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyLong_FromUnsignedLongLong((unsigned long long)num), REF_NEW);
-}
-template <typename T>
-static EnableIfUnsigned64<T, T> convertPyNumToIntNum(const Pothos::Proxy &proxy)
-{
-    return static_cast<T>(PyLong_AsUnsignedLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
 }
 
 static long long convertPyIntToLongLong(const Pothos::Proxy &proxy)
