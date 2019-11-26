@@ -1,12 +1,30 @@
 // Copyright (c) 2013-2016 Josh Blum
+//                    2019 Nicholas Corgan
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Plugin.hpp>
 #include <cassert>
 #include <complex>
 #include <iostream>
+#include <type_traits>
+#include <Poco/Format.h>
 #include <Poco/Types.h>
 #include "PythonProxy.hpp"
+
+/***********************************************************************
+ * SFINAE typedefs
+ **********************************************************************/
+template <typename T, typename U>
+using EnableIfUnsigned = typename std::enable_if<std::is_unsigned<T>::value && (sizeof(T) < 8), U>::type;
+
+template <typename T, typename U>
+using EnableIfSigned = typename std::enable_if<std::is_signed<T>::value && (sizeof(T) < 8), U>::type;
+
+template <typename T, typename U>
+using EnableIfUnsigned64 = typename std::enable_if<std::is_unsigned<T>::value && (sizeof(T) == 8), U>::type;
+
+template <typename T, typename U>
+using EnableIfSigned64 = typename std::enable_if<std::is_signed<T>::value && (sizeof(T) == 8), U>::type;
 
 /***********************************************************************
  * Object -- Allow the use of native python objects.
@@ -70,16 +88,66 @@ pothos_static_block(pothosRegisterPythonBoolConversions)
 }
 
 /***********************************************************************
- * integer types
+ * integer/long types
  **********************************************************************/
 template <typename T>
-static Pothos::Proxy convertIntNumToPyInt(Pothos::ProxyEnvironment::Sptr env, const T &num)
+static EnableIfSigned<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEnvironment::Sptr env, const T &num)
 {
     #if PY_MAJOR_VERSION >= 3
     return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyLong_FromLong(long(num)), REF_NEW);
     #else
     return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyInt_FromLong(long(num)), REF_NEW);
     #endif
+}
+template <typename T>
+static EnableIfSigned<T, T> convertPyNumToIntNum(const Pothos::Proxy &proxy)
+{
+    #if PY_MAJOR_VERSION >= 3
+    return static_cast<T>(PyLong_AsLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
+    #else
+    return static_cast<T>(PyInt_AsLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
+    #endif
+}
+
+template <typename T>
+static EnableIfUnsigned<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEnvironment::Sptr env, const T &num)
+{
+    #if PY_MAJOR_VERSION >= 3
+    return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyLong_FromUnsignedLong((unsigned long)(num)), REF_NEW);
+    #else
+    return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyInt_FromUnsignedLong((unsigned long)(num)), REF_NEW);
+    #endif
+}
+template <typename T>
+static EnableIfUnsigned<T, T> convertPyNumToIntNum(const Pothos::Proxy &proxy)
+{
+    #if PY_MAJOR_VERSION >= 3
+    return static_cast<T>(PyLong_AsUnsignedLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
+    #else
+    return static_cast<T>(PyInt_AsUnsignedLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
+    #endif
+}
+
+template <typename T>
+static EnableIfSigned64<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEnvironment::Sptr env, const T &num)
+{
+    return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyLong_FromLongLong((long long)num), REF_NEW);
+}
+template <typename T>
+static EnableIfSigned64<T, T> convertPyNumToIntNum(const Pothos::Proxy &proxy)
+{
+    return static_cast<T>(PyLong_AsLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
+}
+
+template <typename T>
+static EnableIfUnsigned64<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEnvironment::Sptr env, const T &num)
+{
+    return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyLong_FromUnsignedLongLong((unsigned long long)num), REF_NEW);
+}
+template <typename T>
+static EnableIfUnsigned64<T, T> convertPyNumToIntNum(const Pothos::Proxy &proxy)
+{
+    return static_cast<T>(PyLong_AsUnsignedLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj));
 }
 
 static long long convertPyIntToLongLong(const Pothos::Proxy &proxy)
@@ -101,55 +169,35 @@ static long long convertPyIntToLongLong(const Pothos::Proxy &proxy)
 
 pothos_static_block(pothosRegisterPythonIntConversions)
 {
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/char_to_pyint",
-        &convertIntNumToPyInt<char>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/schar_to_pyint",
-        &convertIntNumToPyInt<signed char>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/uchar_to_pyint",
-        &convertIntNumToPyInt<unsigned char>);
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/char_to_pynum",
+        &convertIntNumToPyNum<char>);
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/schar_to_pynum",
+        &convertIntNumToPyNum<signed char>);
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/uchar_to_pynum",
+        &convertIntNumToPyNum<unsigned char>);
 
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/sshort_to_pyint",
-        &convertIntNumToPyInt<signed short>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/ushort_to_pyint",
-        &convertIntNumToPyInt<unsigned short>);
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/sshort_to_pynum",
+        &convertIntNumToPyNum<signed short>);
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/ushort_to_pynum",
+        &convertIntNumToPyNum<unsigned short>);
 
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/sint_to_pyint",
-        &convertIntNumToPyInt<signed int>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/uint_to_pyint",
-        &convertIntNumToPyInt<unsigned int>);
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/sint_to_pynum",
+        &convertIntNumToPyNum<signed int>);
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/uint_to_pynum",
+        &convertIntNumToPyNum<unsigned int>);
 
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/slong_to_pyint",
-        &convertIntNumToPyInt<signed long>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/ulong_to_pyint",
-        &convertIntNumToPyInt<unsigned long>);
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/slong_to_pynum",
+        &convertIntNumToPyNum<signed long>);
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/ulong_to_pynum",
+        &convertIntNumToPyNum<unsigned long>);
+
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/sllong_to_pynum",
+        &convertIntNumToPyNum<signed long long>);
+    Pothos::PluginRegistry::addCall("/proxy/converters/python/ullong_to_pynum",
+        &convertIntNumToPyNum<unsigned long long>);
 
     Pothos::PluginRegistry::add("/proxy/converters/python/pyint_to_llong",
         Pothos::ProxyConvertPair("int", &convertPyIntToLongLong));
-}
-
-/***********************************************************************
- * long types
- **********************************************************************/
-template <typename T>
-static Pothos::Proxy convertLongLongToPyLong(Pothos::ProxyEnvironment::Sptr env, const T &num)
-{
-    return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyLong_FromLongLong((long long)(num)), REF_NEW);
-}
-
-static long long convertPyLongToLongLong(const Pothos::Proxy &proxy)
-{
-    return PyLong_AsLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
-}
-
-pothos_static_block(pothosRegisterPythonLongConversions)
-{
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/sllong_to_pylong",
-        &convertLongLongToPyLong<signed long long>);
-    Pothos::PluginRegistry::addCall("/proxy/converters/python/ullong_to_pylong",
-        &convertLongLongToPyLong<unsigned long long>);
-
-    Pothos::PluginRegistry::add("/proxy/converters/python/pylong_to_llong",
-        Pothos::ProxyConvertPair("long", &convertPyLongToLongLong));
 }
 
 /***********************************************************************
