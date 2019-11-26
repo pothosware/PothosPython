@@ -1,4 +1,5 @@
 // Copyright (c) 2013-2017 Josh Blum
+//                    2019 Nicholas Corgan
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Testing.hpp>
@@ -189,8 +190,16 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_numpy_types)
     auto env = Pothos::ProxyEnvironment::make("python");
     auto numpy = env->findProxy("numpy");
 
+    POTHOS_TEST_EQUAL(numpy.call("int8", 100).convert<char>(), 100);
     POTHOS_TEST_EQUAL(numpy.call("int16", 123).convert<short>(), 123);
     POTHOS_TEST_EQUAL(numpy.call("int32", 123).convert<int>(), 123);
+    POTHOS_TEST_EQUAL(numpy.call("int64", 123456789).convert<long>(), 123456789);
+    POTHOS_TEST_EQUAL(numpy.call("int64", 123456789).convert<long long>(), 123456789);
+    POTHOS_TEST_EQUAL(numpy.call("uint8", 100).convert<unsigned char>(), 100);
+    POTHOS_TEST_EQUAL(numpy.call("uint16", 123).convert<unsigned short>(), 123);
+    POTHOS_TEST_EQUAL(numpy.call("uint32", 123).convert<unsigned int>(), 123);
+    POTHOS_TEST_EQUAL(numpy.call("uint64", 123456789).convert<unsigned long>(), 123456789);
+    POTHOS_TEST_EQUAL(numpy.call("uint64", 123456789).convert<unsigned long long>(), 123456789);
     POTHOS_TEST_EQUAL(numpy.call("float32", 42.0f).convert<float>(), 42.0f);
     POTHOS_TEST_EQUAL(numpy.call("float64", 42.0).convert<double>(), 42.0);
     POTHOS_TEST_EQUAL(numpy.call("complex64", std::complex<float>(1.0f, -2.0f)).convert<std::complex<float>>(), std::complex<float>(1.0f, -2.0f));
