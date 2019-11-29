@@ -105,7 +105,7 @@ static EnableIfUnsigned<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEnvi
     #if PY_MAJOR_VERSION >= 3
     return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyLong_FromUnsignedLong((unsigned long)(num)), REF_NEW);
     #else
-    return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyInt_FromUnsignedLong((unsigned long)(num)), REF_NEW);
+    return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyInt_FromSize_t((size_t)(num)), REF_NEW);
     #endif
 }
 
