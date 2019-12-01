@@ -121,29 +121,10 @@ static EnableIfUnsigned64<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEn
     return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyLong_FromUnsignedLongLong((unsigned long long)num), REF_NEW);
 }
 
-static long long convertPyIntToLongLong(const Pothos::Proxy &proxy)
+static std::string convertPyNumToString(const Pothos::Proxy &proxy)
 {
-    //python3 has only PyLong functions and we always convert to long long
-    #if PY_MAJOR_VERSION >= 3
-    return PyLong_AsLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
-
-    //python2 when long is 64-bit, we can use the PyInt_AsLong function
-    #elif POCO_LONG_IS_64_BIT
-    return PyInt_AsLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
-
-    //otherwise, convert to PyLong since there isnt a PyInt conversion to 64-bit integer
-    #else
-    return PyLong_AsLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
-
-    #endif
+    return proxy.call<std::string>("__str__");
 }
-
-#if PY_MAJOR_VERSION < 3
-static long long convertPyLongToLongLong(const Pothos::Proxy &proxy)
-{
-    return PyLong_AsLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
-}
-#endif
 
 pothos_static_block(pothosRegisterPythonIntConversions)
 {
@@ -174,11 +155,11 @@ pothos_static_block(pothosRegisterPythonIntConversions)
     Pothos::PluginRegistry::addCall("/proxy/converters/python/ullong_to_pynum",
         &convertIntNumToPyNum<unsigned long long>);
 
-    Pothos::PluginRegistry::add("/proxy/converters/python/pyint_to_llong",
-        Pothos::ProxyConvertPair("int", &convertPyIntToLongLong));
+    Pothos::PluginRegistry::add("/proxy/converters/python/pyint_to_string",
+        Pothos::ProxyConvertPair("int", &convertPyNumToString));
     #if PY_MAJOR_VERSION < 3
-    Pothos::PluginRegistry::add("/proxy/converters/python/pylong_to_llong",
-        Pothos::ProxyConvertPair("long", &convertPyLongToLongLong));
+    Pothos::PluginRegistry::add("/proxy/converters/python/pylong_to_string",
+        Pothos::ProxyConvertPair("long", &convertPyNumToString));
     #endif
 }
 
