@@ -1,4 +1,5 @@
 # Copyright (c) 2016-2016 Josh Blum
+#                    2019 Nicholas Corgan
 # SPDX-License-Identifier: BSL-1.0
 
 from . PothosModule import *
@@ -20,4 +21,4 @@ class LogHandler(logging.Handler):
             logging.DEBUG:'DEBUG',
             logging.NOTSET:'NOTSET',
         }[record.levelno]
-        self._logger.log(record.name, str(record.msg), level)
+        self._logger.log(record.name, record.getMessage(), level)
