@@ -5,9 +5,14 @@
 #include <Pothos/Testing.hpp>
 #include <Pothos/Proxy.hpp>
 #include <Pothos/Framework/BufferChunk.hpp>
+#include <Poco/File.h>
+#include <Poco/Logger.h>
+#include <Poco/SimpleFileChannel.h>
+#include <Poco/TemporaryFile.h>
 #include <iostream>
 #include <complex>
 #include <cstdlib>
+#include <fstream>
 #include <sstream>
 #include <complex>
 
@@ -204,4 +209,44 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_numpy_types)
     POTHOS_TEST_EQUAL(numpy.call("float64", 42.0).convert<double>(), 42.0);
     POTHOS_TEST_EQUAL(numpy.call("complex64", std::complex<float>(1.0f, -2.0f)).convert<std::complex<float>>(), std::complex<float>(1.0f, -2.0f));
     POTHOS_TEST_EQUAL(numpy.call("complex128", std::complex<double>(1.0, -2.0)).convert<std::complex<double>>(), std::complex<double>(1.0, -2.0));
+}
+
+POTHOS_TEST_BLOCK("/proxy/python/tests", test_logging_python_warnings)
+{
+    auto env = Pothos::ProxyEnvironment::make("python");
+
+    const std::string logPath = Poco::TemporaryFile::tempName();
+    POTHOS_TEST_TRUE(!Poco::File(logPath).exists());
+    Poco::TemporaryFile::registerForDeletion(logPath);
+
+    // Add a channel to the relevant Poco logger to write the output
+    // to file. This will allow us to make sure output is written as
+    // expected.
+    auto& pyWarningsLogger = Poco::Logger::get("py.warnings");
+    pyWarningsLogger.setChannel(new Poco::SimpleFileChannel(logPath));
+
+    const std::string warningTypeName = "UserWarning";
+    const std::string warningMessage = "This is a warning message.";
+    env->findProxy("Pothos.TestPothos").call("CallWarning", warningMessage);
+    POTHOS_TEST_TRUE(Poco::File(logPath).exists());
+
+    // Get the contents of the log file.
+    std::string fileContents;
+    const auto fileSize = Poco::File(logPath).getSize();
+    fileContents.resize(fileSize);
+
+    std::fstream ifile(logPath.c_str(), std::ios::in);
+    ifile.read(const_cast<char*>(fileContents.c_str()), fileSize);
+    ifile.close();
+
+    const std::vector<std::string> expectedStrings =
+    {
+        "TestPothos.py",
+        ("UserWarning: " + warningMessage),
+        "warnings.warn(msg, UserWarning, stacklevel=1)"
+    };
+    for(const auto& expectedString: expectedStrings)
+    {
+        POTHOS_TEST_TRUE(std::string::npos != fileContents.find(expectedString));
+    }
 }

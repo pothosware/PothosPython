@@ -3,7 +3,13 @@
 
 import Pothos
 import unittest
+import warnings
 import numpy as np
+
+# Pothos can't do this from its Proxy infrastructure because it can't
+# get "UserWarning".
+def CallWarning(msg):
+    warnings.warn(msg, UserWarning, stacklevel=1)
 
 class TestPothosModule(unittest.TestCase):
 
