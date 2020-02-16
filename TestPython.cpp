@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2017 Josh Blum
+// Copyright (c) 2013-2020 Josh Blum
 //                    2019 Nicholas Corgan
 // SPDX-License-Identifier: BSL-1.0
 
@@ -15,6 +15,7 @@
 #include <fstream>
 #include <sstream>
 #include <complex>
+#include <limits>
 
 POTHOS_TEST_BLOCK("/proxy/python/tests", test_basic_types)
 {
@@ -27,13 +28,16 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_basic_types)
     POTHOS_TEST_EQUAL(env->makeProxy(true).convert<bool>(), true);
     POTHOS_TEST_EQUAL(env->makeProxy(false).convert<bool>(), false);
 
-    const int intVal = int(std::rand()-RAND_MAX/2);
+    const auto intVal = int(std::rand()-RAND_MAX/2);
     POTHOS_TEST_EQUAL(env->makeProxy(intVal).convert<int>(), intVal);
 
-    const long long longVal = (long long)(std::rand()-RAND_MAX/2);
+    const auto longVal = (long long)(std::rand()-RAND_MAX/2);
     POTHOS_TEST_EQUAL(env->makeProxy(longVal).convert<long long>(), longVal);
 
-    const double floatVal = double(std::rand()-RAND_MAX/2);
+    const auto ulongVal = (unsigned long long)((uint64_t(1) << 63) + std::rand());
+    POTHOS_TEST_EQUAL(env->makeProxy(ulongVal).convert<unsigned long long>(), ulongVal);
+
+    const auto floatVal = double(std::rand()-RAND_MAX/2);
     POTHOS_TEST_EQUAL(env->makeProxy(floatVal).convert<double>(), floatVal);
 
     const std::complex<double> complexVal(1.0*(std::rand()-RAND_MAX/2), 1.0*(std::rand()-RAND_MAX/2));
@@ -41,6 +45,45 @@ POTHOS_TEST_BLOCK("/proxy/python/tests", test_basic_types)
 
     const std::string strVal = "Hello World!";
     POTHOS_TEST_EQUAL(env->makeProxy(strVal).convert<std::string>(), strVal);
+}
+
+template <typename T>
+static void testTypeBounds(Pothos::ProxyEnvironment::Sptr env)
+{
+    POTHOS_TEST_EQUAL(
+        std::numeric_limits<T>::min(),
+        env->makeProxy(std::numeric_limits<T>::min()).template convert<T>());
+    POTHOS_TEST_EQUAL(
+        std::numeric_limits<T>::max(),
+        env->makeProxy(std::numeric_limits<T>::max()).template convert<T>());
+}
+
+POTHOS_TEST_BLOCK("/proxy/python/tests", test_type_bounds)
+{
+    auto env = Pothos::ProxyEnvironment::make("python");
+
+    std::cout << "Testing std::int8_t" << std::endl;
+    testTypeBounds<std::int8_t>(env);
+    std::cout << "Testing std::int16_t" << std::endl;
+    testTypeBounds<std::int16_t>(env);
+    std::cout << "Testing std::int32_t" << std::endl;
+    testTypeBounds<std::int32_t>(env);
+    std::cout << "Testing std::int64_t" << std::endl;
+    testTypeBounds<std::int64_t>(env);
+
+    std::cout << "Testing std::uint8_t" << std::endl;
+    testTypeBounds<std::uint8_t>(env);
+    std::cout << "Testing std::uint16_t" << std::endl;
+    testTypeBounds<std::uint16_t>(env);
+    std::cout << "Testing std::uint32_t" << std::endl;
+    testTypeBounds<std::uint32_t>(env);
+    std::cout << "Testing std::uint64_t" << std::endl;
+    testTypeBounds<std::uint64_t>(env);
+
+    std::cout << "Testing float" << std::endl;
+    testTypeBounds<float>(env);
+    std::cout << "Testing double" << std::endl;
+    testTypeBounds<double>(env);
 }
 
 POTHOS_TEST_BLOCK("/proxy/python/tests", test_compare_to)
