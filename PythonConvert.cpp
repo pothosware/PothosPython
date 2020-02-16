@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2016 Josh Blum
+// Copyright (c) 2013-2020 Josh Blum
 //                    2019 Nicholas Corgan
 // SPDX-License-Identifier: BSL-1.0
 
@@ -121,29 +121,18 @@ static EnableIfUnsigned64<T, Pothos::Proxy> convertIntNumToPyNum(Pothos::ProxyEn
     return std::dynamic_pointer_cast<PythonProxyEnvironment>(env)->makeHandle(PyLong_FromUnsignedLongLong((unsigned long long)num), REF_NEW);
 }
 
-static long long convertPyIntToLongLong(const Pothos::Proxy &proxy)
+static Pothos::Object convertPyLongToLongLong(const Pothos::Proxy &proxy)
 {
-    //python3 has only PyLong functions and we always convert to long long
-    #if PY_MAJOR_VERSION >= 3
-    return PyLong_AsLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
-
-    //python2 when long is 64-bit, we can use the PyInt_AsLong function
-    #elif POCO_LONG_IS_64_BIT
-    return PyInt_AsLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
-
-    //otherwise, convert to PyLong since there isnt a PyInt conversion to 64-bit integer
-    #else
-    return PyLong_AsLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
-
-    #endif
+    //Try to convert to a signed long long,
+    //however return an unsigned long long in the case of overflow.
+    //The result is returned as a Pothos::Object to erase the type
+    //and convertProxyToObject handles this special case.
+    int overflow(0);
+    auto obj = std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj;
+    auto r = PyLong_AsLongLongAndOverflow(obj, &overflow);
+    if (overflow) return Pothos::Object(PyLong_AsUnsignedLongLongMask(obj));
+    return Pothos::Object(r);
 }
-
-#if PY_MAJOR_VERSION < 3
-static long long convertPyLongToLongLong(const Pothos::Proxy &proxy)
-{
-    return PyLong_AsLongLong(std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj);
-}
-#endif
 
 pothos_static_block(pothosRegisterPythonIntConversions)
 {
@@ -175,7 +164,9 @@ pothos_static_block(pothosRegisterPythonIntConversions)
         &convertIntNumToPyNum<unsigned long long>);
 
     Pothos::PluginRegistry::add("/proxy/converters/python/pyint_to_llong",
-        Pothos::ProxyConvertPair("int", &convertPyIntToLongLong));
+        Pothos::ProxyConvertPair("int", &convertPyLongToLongLong));
+
+    //int and long are distinct types in python2, so long gets its own entry
     #if PY_MAJOR_VERSION < 3
     Pothos::PluginRegistry::add("/proxy/converters/python/pylong_to_llong",
         Pothos::ProxyConvertPair("long", &convertPyLongToLongLong));

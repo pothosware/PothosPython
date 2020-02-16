@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2016 Josh Blum
+// Copyright (c) 2013-2020 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include "PythonSupport.hpp"
@@ -95,7 +95,9 @@ Pothos::Proxy PythonProxyEnvironment::convertObjectToProxy(const Pothos::Object 
 Pothos::Object PythonProxyEnvironment::convertProxyToObject(const Pothos::Proxy &proxy)
 {
     PyGilStateLock lock;
-    return Pothos::ProxyEnvironment::convertProxyToObject(proxy);
+    auto r = Pothos::ProxyEnvironment::convertProxyToObject(proxy);
+    if (r.type() == typeid(Pothos::Object)) return r.extract<Pothos::Object>();
+    return r;
 }
 
 void PythonProxyEnvironment::serialize(const Pothos::Proxy &proxy, std::ostream &os)
