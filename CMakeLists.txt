@@ -117,6 +117,7 @@ set(SOURCES
    PythonConfLoader.cpp
    PythonLogger.cpp
    FrameworkTypes.cpp
+   PythonInfo.cpp
 )
 
 POTHOS_MODULE_UTIL(
