@@ -6,7 +6,7 @@
 
 #include <Poco/String.h>
 
-#include <nlohmann/json.hpp>
+#include <json.hpp>
 
 #include <sstream>
 
