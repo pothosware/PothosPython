@@ -3,6 +3,9 @@ This this the changelog file for the Pothos Python toolkit.
 Release 0.4.1 (pending)
 ==========================
 
+- Added python environment info
+- Additional logging support
+- Add support for full range of integers in python
 - Support optional topology factory args (ex JSON factory)
 
 Release 0.4.0 (2017-12-25)
