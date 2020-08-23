@@ -24,11 +24,11 @@ static std::string __getPythonInfoJSON()
     auto& versionInfo = pythonInfo["Version Info"];
 
     auto sysVersionInfo = sys.get("version_info");
-    versionInfo["Major"] = sysVersionInfo.call<int>("__getitem__", 0);
-    versionInfo["Minor"] = sysVersionInfo.call<int>("__getitem__", 1);
-    versionInfo["Patch"] = sysVersionInfo.call<int>("__getitem__", 2);
+    versionInfo["Major"] = sysVersionInfo.call<int, int>("__getitem__", 0);
+    versionInfo["Minor"] = sysVersionInfo.call<int, int>("__getitem__", 1);
+    versionInfo["Patch"] = sysVersionInfo.call<int, int>("__getitem__", 2);
     versionInfo["Release Level"] = sysVersionInfo.call<std::string>("__getitem__", 3);
-    versionInfo["Serial"] = sysVersionInfo.call<int>("__getitem__", 4);
+    versionInfo["Serial"] = sysVersionInfo.call<int, int>("__getitem__", 4);
 
     auto fullVersionString = sys.get<std::string>("version");
     versionInfo["Version String"] = fullVersionString.substr(0, fullVersionString.find(" "));
