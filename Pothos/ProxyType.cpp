@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2016 Josh Blum
+//                    2020 Nicholas Corgan
 // SPDX-License-Identifier: BSL-1.0
 
 #include "PothosModule.hpp"
@@ -95,7 +96,7 @@ int Proxy_setattr(PyObject *self, PyObject *attr_name, PyObject *v)
     return 0;
 }
 
-static PyObject *Proxy_convert(ProxyObject *self)
+static PyObject *Proxy_convert(ProxyObject *self, PyObject *)
 {
     try
     {
@@ -180,12 +181,12 @@ static int Proxy_bool(ProxyObject *self)
     return bool(*self->proxy)? 1 : 0;
 }
 
-static PyObject *Proxy_getEnvironment(ProxyObject *self)
+static PyObject *Proxy_getEnvironment(ProxyObject *self, PyObject *)
 {
     return makeProxyEnvironmentObject(self->proxy->getEnvironment());
 }
 
-static PyObject *Proxy_getClassName(ProxyObject *self)
+static PyObject *Proxy_getClassName(ProxyObject *self, PyObject *)
 {
     const auto name = self->proxy->getClassName();
     auto proxy = getPythonProxyEnv()->makeProxy(name);

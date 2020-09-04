@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2014 Josh Blum
+//                    2020 Nicholas Corgan
 // SPDX-License-Identifier: BSL-1.0
 
 #include "PothosModule.hpp"
@@ -78,7 +79,7 @@ static PyObject *ProxyEnvironment_findProxy(ProxyEnvironmentObject *self, PyObje
     }
 }
 
-static PyObject *ProxyEnvironment_getName(ProxyEnvironmentObject *self)
+static PyObject *ProxyEnvironment_getName(ProxyEnvironmentObject *self, PyObject *)
 {
     const auto name = (*self->env)->getName();
     auto proxy = getPythonProxyEnv()->makeProxy(name);
