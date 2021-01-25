@@ -4,6 +4,7 @@ Release 0.4.2 (pending)
 ==========================
 
 - Fix call() template deduction for OSX
+- Fix invalid pointer cast for registered python methods
 
 Release 0.4.1 (2020-07-19)
 ==========================
