@@ -1,3 +1,9 @@
+pothos-python (0.4.2-1) unstable; urgency=low
+
+  * Release 0.4.2 (2021-01-24)
+
+ -- Josh Blum <josh@pothosware.com>  Sun, 24 Jan 2021 18:52:28 -0000
+
 pothos-python (0.4.1-1) unstable; urgency=low
 
   * Release 0.4.1 (2020-07-19)
