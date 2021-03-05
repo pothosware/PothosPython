@@ -1,4 +1,5 @@
 // Copyright (c) 2013-2020 Josh Blum
+//                    2021 Nicholas Corgan
 // SPDX-License-Identifier: BSL-1.0
 
 #include "PythonSupport.hpp"
@@ -18,7 +19,12 @@ struct PythonInterpWrapper
         _s(nullptr)
     {
         Py_Initialize();
+#if PY_VERSION_HEX < 0x03070000
+        // Python 3.7: automatically called by Py_Initialize()
+        // Python 3.9: deprecated, does nothing
+        // Python 3.11: removed
         PyEval_InitThreads();
+#endif
         _s = PyEval_SaveThread();
     }
 
