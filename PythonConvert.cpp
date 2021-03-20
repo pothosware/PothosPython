@@ -1,5 +1,5 @@
 // Copyright (c) 2013-2020 Josh Blum
-//                    2019 Nicholas Corgan
+//               2019-2021 Nicholas Corgan
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Plugin.hpp>
@@ -272,6 +272,13 @@ static std::vector<char> convertPyBytesToString(const Pothos::Proxy &proxy)
     return std::vector<char>(c, c+PyBytes_Size(obj));
 }
 
+static std::vector<char> convertPyByteArrayToString(const Pothos::Proxy &proxy)
+{
+    auto obj = std::dynamic_pointer_cast<PythonProxyHandle>(proxy.getHandle())->obj;
+    auto c = PyByteArray_AsString(obj);
+    return std::vector<char>(c, c+PyByteArray_Size(obj));
+}
+
 pothos_static_block(pothosRegisterPythonBytesConversions)
 {
     Pothos::PluginRegistry::addCall("/proxy/converters/python/vecchar_to_pybytes",
@@ -282,6 +289,8 @@ pothos_static_block(pothosRegisterPythonBytesConversions)
         &convertByteVectorToPyBytes<unsigned char>);
     Pothos::PluginRegistry::add("/proxy/converters/python/pybytes_to_string",
         Pothos::ProxyConvertPair("bytes", &convertPyBytesToString));
+    Pothos::PluginRegistry::add("/proxy/converters/python/pybytearray_to_string",
+        Pothos::ProxyConvertPair("bytearray", &convertPyByteArrayToString));
 }
 
 /***********************************************************************
@@ -456,6 +465,8 @@ pothos_static_block(pothosRegisterPythonSetConversions)
         &convertSetToPySet);
     Pothos::PluginRegistry::add("/proxy/converters/python/pyset_to_set",
         Pothos::ProxyConvertPair("set", &convertPySetToSet));
+    Pothos::PluginRegistry::add("/proxy/converters/python/pyfrozenset_to_set",
+        Pothos::ProxyConvertPair("frozenset", &convertPySetToSet));
 }
 
 /***********************************************************************
