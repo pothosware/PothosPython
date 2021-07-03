@@ -1,5 +1,12 @@
 This this the changelog file for the Pothos Python toolkit.
 
+Release 0.4.3 (pending)
+==========================
+
+- Added --embed flag for python config for versions 3.8 and up
+- Starting from Python 3.7, don't call Py_InitThreads
+- Added conversions for builtin types "bytearray" and "frozenset"
+
 Release 0.4.2 (2021-01-24)
 ==========================
 

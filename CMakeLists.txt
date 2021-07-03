@@ -31,8 +31,18 @@ if (USE_PYTHON_CONFIG AND EXISTS ${PYTHON_CONFIG_EXECUTABLE})
     string(REGEX REPLACE "^[-I]" "" PYTHON_INCLUDE_DIRS "${PYTHON_INCLUDE_DIRS}")
     string(REGEX REPLACE "[ ]-I" " " PYTHON_INCLUDE_DIRS "${PYTHON_INCLUDE_DIRS}")
     separate_arguments(PYTHON_INCLUDE_DIRS)
+
+    #for python3.8 and above, use --embed to link python into the pothos module
+    #pothos module util should fail if symbols are missing, but if this is bypassed
+    #the runtime load of the python support module will fail without the --embed
+    #earlier version of python config executable do not have this flag error with it
+    if (PYTHON_VERSION_STRING AND "${PYTHON_VERSION_STRING}" GREATER_EQUAL "3.8")
+        list(APPEND PYTHON_CONFIG_EXTRA_ARGS --embed)
+    endif()
+
     execute_process(
         COMMAND ${PYTHON_CONFIG_EXECUTABLE}  --ldflags
+        ${PYTHON_CONFIG_EXTRA_ARGS}
         OUTPUT_STRIP_TRAILING_WHITESPACE
         OUTPUT_VARIABLE PYTHON_LIBRARIES)
     set(PYTHONLIBS_VERSION_STRING ${PYTHON_VERSION_STRING})
