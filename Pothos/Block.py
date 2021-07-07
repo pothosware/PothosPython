@@ -51,7 +51,7 @@ class Block(object):
 
     def work(self): pass
 
-    def propagateLabels(self, input, labels): pass
+    def propagateLabels(self, input): pass
 
-    def propagateLabelsAdaptor(self, input, labels):
-        self.propagateLabels(InputPort(input), LabelIteratorRange(labels))
+    def _propagateLabels(self, input):
+        self.propagateLabels(InputPort(input))

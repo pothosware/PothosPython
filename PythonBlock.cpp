@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2016 Josh Blum
+// Copyright (c) 2014-2021 Josh Blum
 // SPDX-License-Identifier: BSL-1.0
 
 #include <Pothos/Framework.hpp>
@@ -38,9 +38,10 @@ public:
         _block.call("deactivate");
     }
 
-    void propagateLabels(const Pothos::InputPort *input, const Pothos::LabelIteratorRange &labels)
+    void propagateLabels(const Pothos::InputPort *input)
     {
-        _block.call("propagateLabelsAdaptor", input, labels);
+        //forward to wrapper that casts input object
+        _block.call("_propagateLabels", input);
     }
 
     Pothos::Object opaqueCallHandler(const std::string &name, const Pothos::Object *inputArgs, const size_t numArgs)
