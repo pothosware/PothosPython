@@ -137,6 +137,12 @@ POTHOS_MODULE_UTIL(
     DESTINATION proxy/environment
 )
 
+#cant fix compile warnings from Python.h itself
+if (CMAKE_COMPILER_IS_GNUCXX)
+target_compile_options(PythonSupport PRIVATE -Wno-missing-braces)
+target_compile_options(PythonSupport PRIVATE -Wno-missing-field-initializers)
+endif (CMAKE_COMPILER_IS_GNUCXX)
+
 ########################################################################
 # Install cmake helper modules
 ########################################################################
