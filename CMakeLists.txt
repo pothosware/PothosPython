@@ -137,6 +137,12 @@ POTHOS_MODULE_UTIL(
     DESTINATION proxy/environment
 )
 
+#apple clang has extremely strict visibility with templates and typeinfo
+#this fixes the typeid for the registration for the pyobject* converter
+if (APPLE)
+set_property(TARGET PythonSupport PROPERTY CXX_VISIBILITY_PRESET default)
+endif (APPLE)
+
 #cant fix compile warnings from Python.h itself
 if (CMAKE_COMPILER_IS_GNUCXX)
 target_compile_options(PythonSupport PRIVATE -Wno-missing-braces)
