@@ -51,7 +51,7 @@ class Block(object):
 
     def work(self): pass
 
-    def propagateLabels(self, input): pass
+    def propagateLabels(self, input): return NotImplemented
 
-    def _propagateLabels(self, input):
-        self.propagateLabels(InputPort(input))
+    def _propagateLabels(self, name):
+        return self.propagateLabels(self.input(name)) is NotImplemented

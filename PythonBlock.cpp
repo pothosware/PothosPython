@@ -40,8 +40,11 @@ public:
 
     void propagateLabels(const Pothos::InputPort *input)
     {
-        //forward to wrapper that casts input object
-        _block.call("_propagateLabels", input);
+        //forward to wrapper that takes input port name
+        auto not_implemeneted = _block.call<bool>("_propagateLabels", input->name());
+
+        //if the overload was not implemented, call base function
+        if (not_implemeneted) Pothos::Block::propagateLabels(input);
     }
 
     Pothos::Object opaqueCallHandler(const std::string &name, const Pothos::Object *inputArgs, const size_t numArgs)
