@@ -18,8 +18,10 @@ static std::string __getPythonInfoJSON()
     nlohmann::json topObj;
     auto& pythonInfo = topObj["Python Info"];
     pythonInfo["Exec Prefix"] = sys.get<std::string>("exec_prefix");
+    #if PY_MAJOR_VERSION >= 3
     pythonInfo["Implementation"] = sys.get("implementation").get<std::string>("name");
     pythonInfo["Cache Tag"] = sys.get("implementation").get<std::string>("cache_tag");
+    #endif
 
     auto& versionInfo = pythonInfo["Version Info"];
 
