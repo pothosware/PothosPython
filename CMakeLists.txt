@@ -163,4 +163,5 @@ install(
 # Enter the subdirectory configuration
 ########################################################################
 add_subdirectory(Pothos)
+add_subdirectory(Blocks)
 add_subdirectory(TestBlocks)

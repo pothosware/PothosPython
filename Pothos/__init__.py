@@ -1,5 +1,5 @@
 # Copyright (c) 2014-2016 Josh Blum
-#                    2019 Nicholas Corgan
+#               2019-2020 Nicholas Corgan
 # SPDX-License-Identifier: BSL-1.0
 
 from . PothosModule import *
